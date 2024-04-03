@@ -100,7 +100,7 @@ public class NPCHealth : MonoBehaviourPunCallbacks, IPunObservable
         
 
             animator.SetTrigger("IsDead");
-            AddMessageEvent(" NPC was killed by " + enemyName + "!");
+            //AddMessageEvent(" NPC was killed by " + enemyName + "!");
             RespawnEvent(respawnTime);
             StartCoroutine("DestoryPlayer", respawnTime);
         
