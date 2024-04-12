@@ -34,6 +34,7 @@ public class NPCHealth : MonoBehaviourPunCallbacks, IPunObservable
     private Animator animator;
 
     private int currentHealth;
+    [HideInInspector]
     public bool isDead;
     private bool isSinking;
     private bool damaged;
