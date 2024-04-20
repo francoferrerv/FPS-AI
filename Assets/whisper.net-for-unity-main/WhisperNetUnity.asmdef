@@ -1,0 +1,16 @@
+{
+    "name": "WhisperNetUnity",
+    "rootNamespace": "",
+    "references": [
+        "WhisperNetDemo"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

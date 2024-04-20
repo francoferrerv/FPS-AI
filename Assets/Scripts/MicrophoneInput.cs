@@ -1,5 +1,7 @@
+using System;
 using System.IO;
 using UnityEngine;
+using Whisper.net;
 
 public class MicrophoneInput : MonoBehaviour
 {
@@ -42,7 +44,7 @@ public class MicrophoneInput : MonoBehaviour
     {
         startTime = Time.time;
         bool loop = false; // Do not loop the recording
-        recording = Microphone.Start(deviceName, loop, 60, 44100);
+        recording = Microphone.Start(deviceName, loop, 60, 16000);
         // Wait until recording has started
         while (!(Microphone.GetPosition(deviceName) > 0)) { }
         // Recording has started
@@ -57,7 +59,7 @@ public class MicrophoneInput : MonoBehaviour
         SaveRecording();
     }
 
-    void SaveRecording()
+    async void SaveRecording()
     {
         float duration = Time.time - startTime;
         if (recording == null)
@@ -70,6 +72,8 @@ public class MicrophoneInput : MonoBehaviour
         SavWav.Save(filePath, recording); // Save the recording as a WAV file
 
         Debug.Log("Recording saved to: " + filePath);
+
+        await Program.Main();
     }
 
     AudioClip TrimRecording(AudioClip originalClip, float targetDuration)
