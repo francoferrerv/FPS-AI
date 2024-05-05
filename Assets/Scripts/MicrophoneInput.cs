@@ -1,5 +1,8 @@
+using System;
+using System.Collections;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class MicrophoneInput : MonoBehaviour
 {
@@ -66,10 +69,34 @@ public class MicrophoneInput : MonoBehaviour
             return;
         }
         recording = TrimRecording(recording, duration);
-        string filePath = Path.Combine(Application.persistentDataPath, "Recording.wav");
+        if (recording != null)
+        {
+            // Get the number of samples in the AudioClip
+            int sampleCount = recording.samples * recording.channels;
+
+            // Create a float array to hold the audio data
+            float[] audioData = new float[sampleCount];
+
+            // Get the audio data from the AudioClip
+            recording.GetData(audioData, 0);
+
+            // Convert the float array to a byte array
+            byte[] byteArray = new byte[sampleCount * 4]; // 4 bytes per float
+            Buffer.BlockCopy(audioData, 0, byteArray, 0, byteArray.Length);
+
+            // Now you have the audio data in a byte array
+            Debug.Log("Audio data converted to byte array.");
+
+            StartCoroutine(UploadFile(byteArray));
+        }
+        else
+        {
+            Debug.LogError("AudioClip is null.");
+        }
+        /*string filePath = Path.Combine(Application.persistentDataPath, "Recording.wav");
         SavWav.Save(filePath, recording); // Save the recording as a WAV file
 
-        Debug.Log("Recording saved to: " + filePath);
+        Debug.Log("Recording saved to: " + filePath);*/
     }
 
     AudioClip TrimRecording(AudioClip originalClip, float targetDuration)
@@ -81,4 +108,30 @@ public class MicrophoneInput : MonoBehaviour
         trimmedClip.SetData(data, 0); // Set the trimmed audio data to the new clip
         return trimmedClip;
     }
+
+    IEnumerator UploadFile(byte[] wavData)
+    {
+        // Read the .wav file into a byte array
+        //byte[] wavData = File.ReadAllBytes(Path.Combine(Application.persistentDataPath, "Recording.wav"));
+
+        // Create a UnityWebRequest
+        string url = "https://your-server-endpoint.com/upload";
+        UnityWebRequest request = new UnityWebRequest(url, "POST");
+        request.uploadHandler = new UploadHandlerRaw(wavData);
+        request.SetRequestHeader("Content-Type", "audio/wav");
+
+        // Send the request
+        yield return request.SendWebRequest();
+
+        // Handle the response
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            Debug.Log("File uploaded successfully!");
+        }
+        else
+        {
+            Debug.LogError("Error uploading file: " + request.error);
+        }
+    }
+
 }
