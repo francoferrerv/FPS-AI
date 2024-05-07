@@ -1,137 +1,133 @@
-using System;
-using System.Collections;
-using System.IO;
+using System.Diagnostics;
 using UnityEngine;
-using UnityEngine.Networking;
+using UnityEngine.UI;
+using Whisper.Utils;
+using Button = UnityEngine.UI.Button;
+using Toggle = UnityEngine.UI.Toggle;
 
-public class MicrophoneInput : MonoBehaviour
+namespace Whisper.Samples
 {
-    private bool isRecording = false;
-    private string deviceName;
-    private AudioClip recording;
-    private float startTime;
-    void Start()
+    /// <summary>
+    /// Record audio clip from microphone and make a transcription.
+    /// </summary>
+    public class MicrophoneInput : MonoBehaviour
     {
-        // Check if microphone access is granted
-        if (Microphone.devices.Length == 0)
+        public WhisperManager whisper;
+        public MicrophoneRecord microphoneRecord;
+        public bool streamSegments = true;
+        public bool printLanguage = true;
+
+        [Header("UI")]
+        public Button button;
+        public Text buttonText;
+        public Text outputText;
+        public Text timeText;
+        public Dropdown languageDropdown;
+        public Toggle translateToggle;
+        public Toggle vadToggle;
+        public ScrollRect scroll;
+
+        private string _buffer;
+
+        private void Awake()
         {
-            Debug.LogError("No microphone detected!");
-            return;
+            whisper.OnNewSegment += OnNewSegment;
+            whisper.OnProgress += OnProgressHandler;
+
+            microphoneRecord.OnRecordStop += OnRecordStop;
+
+            //button.onClick.AddListener(OnButtonPressed);
+            languageDropdown.value = languageDropdown.options
+                .FindIndex(op => op.text == whisper.language);
+            languageDropdown.onValueChanged.AddListener(OnLanguageChanged);
+
+            translateToggle.isOn = whisper.translateToEnglish;
+            translateToggle.onValueChanged.AddListener(OnTranslateChanged);
+
+            vadToggle.isOn = microphoneRecord.vadStop;
+            vadToggle.onValueChanged.AddListener(OnVadChanged);
         }
-        deviceName = Microphone.devices[0]; // Use the first available microphone
 
-       
-    }
-    void Update()
-    {
-        // Check if the "R" key is pressed
-        if (Input.GetKeyDown(KeyCode.R))
+        private void Update()
         {
-            // Toggle recording state
-            isRecording = !isRecording;
-
-            if (isRecording)
+            if (Input.GetKeyDown(KeyCode.R))
             {
-                StartRecording();
+                // Call the method when 'R' key is pressed
+                OnButtonPressed();
+            }
+        }
+
+        private void OnVadChanged(bool vadStop)
+        {
+            microphoneRecord.vadStop = vadStop;
+        }
+
+        private void OnButtonPressed()
+        {
+            if (!microphoneRecord.IsRecording)
+            {
+                microphoneRecord.StartRecord();
+                UnityEngine.Debug.Log("Started Recording");
+                buttonText.text = "Stop";
             }
             else
             {
-                StopRecording();
+                microphoneRecord.StopRecord();
+                UnityEngine.Debug.Log("Stopped Recording");
+                buttonText.text = "Record";
             }
         }
-    }
 
-    void StartRecording()
-    {
-        startTime = Time.time;
-        bool loop = false; // Do not loop the recording
-        recording = Microphone.Start(deviceName, loop, 60, 44100);
-        // Wait until recording has started
-        while (!(Microphone.GetPosition(deviceName) > 0)) { }
-        // Recording has started
-        Debug.Log("Recording started from microphone: " + deviceName);
-    }
-
-    void StopRecording()
-    {
-        Microphone.End(deviceName); // Stop recording
-        // Save or process the recorded audio data here
-        Debug.Log("Recording stopped");
-        SaveRecording();
-    }
-
-    void SaveRecording()
-    {
-        float duration = Time.time - startTime;
-        if (recording == null)
+        private async void OnRecordStop(AudioChunk recordedAudio)
         {
-            Debug.LogWarning("No recording to save!");
-            return;
+            buttonText.text = "Record";
+            _buffer = "";
+
+            var sw = new Stopwatch();
+            sw.Start();
+
+            var res = await whisper.GetTextAsync(recordedAudio.Data, recordedAudio.Frequency, recordedAudio.Channels);
+            if (res == null || !outputText)
+                return;
+
+            var time = sw.ElapsedMilliseconds;
+            var rate = recordedAudio.Length / (time * 0.001f);
+            timeText.text = $"Time: {time} ms\nRate: {rate:F1}x";
+
+            var text = res.Result;
+            if (printLanguage)
+                text += $"\n\nLanguage: {res.Language}";
+
+            outputText.text = text;
+            UiUtils.ScrollDown(scroll);
         }
-        recording = TrimRecording(recording, duration);
-        if (recording != null)
+
+        private void OnLanguageChanged(int ind)
         {
-            // Get the number of samples in the AudioClip
-            int sampleCount = recording.samples * recording.channels;
-
-            // Create a float array to hold the audio data
-            float[] audioData = new float[sampleCount];
-
-            // Get the audio data from the AudioClip
-            recording.GetData(audioData, 0);
-
-            // Convert the float array to a byte array
-            byte[] byteArray = new byte[sampleCount * 4]; // 4 bytes per float
-            Buffer.BlockCopy(audioData, 0, byteArray, 0, byteArray.Length);
-
-            // Now you have the audio data in a byte array
-            Debug.Log("Audio data converted to byte array.");
-
-            StartCoroutine(UploadFile(byteArray));
+            var opt = languageDropdown.options[ind];
+            whisper.language = opt.text;
         }
-        else
+
+        private void OnTranslateChanged(bool translate)
         {
-            Debug.LogError("AudioClip is null.");
+            whisper.translateToEnglish = translate;
         }
-        /*string filePath = Path.Combine(Application.persistentDataPath, "Recording.wav");
-        SavWav.Save(filePath, recording); // Save the recording as a WAV file
 
-        Debug.Log("Recording saved to: " + filePath);*/
-    }
-
-    AudioClip TrimRecording(AudioClip originalClip, float targetDuration)
-    {
-        int targetSamples = (int)(targetDuration * originalClip.frequency); // Calculate the target number of samples
-        float[] data = new float[targetSamples]; // Create a new array to store the trimmed audio data
-        originalClip.GetData(data, 0); // Copy the audio data from the original clip to the new array
-        AudioClip trimmedClip = AudioClip.Create("TrimmedClip", targetSamples, originalClip.channels, originalClip.frequency, false); // Create a new AudioClip with the trimmed data
-        trimmedClip.SetData(data, 0); // Set the trimmed audio data to the new clip
-        return trimmedClip;
-    }
-
-    IEnumerator UploadFile(byte[] wavData)
-    {
-        // Read the .wav file into a byte array
-        //byte[] wavData = File.ReadAllBytes(Path.Combine(Application.persistentDataPath, "Recording.wav"));
-
-        // Create a UnityWebRequest
-        string url = "https://your-server-endpoint.com/upload";
-        UnityWebRequest request = new UnityWebRequest(url, "POST");
-        request.uploadHandler = new UploadHandlerRaw(wavData);
-        request.SetRequestHeader("Content-Type", "audio/wav");
-
-        // Send the request
-        yield return request.SendWebRequest();
-
-        // Handle the response
-        if (request.result == UnityWebRequest.Result.Success)
+        private void OnProgressHandler(int progress)
         {
-            Debug.Log("File uploaded successfully!");
+            if (!timeText)
+                return;
+            timeText.text = $"Progress: {progress}%";
         }
-        else
+
+        private void OnNewSegment(WhisperSegment segment)
         {
-            Debug.LogError("Error uploading file: " + request.error);
+            if (!streamSegments || !outputText)
+                return;
+
+            _buffer += segment.Text;
+            outputText.text = _buffer + "...";
+            UiUtils.ScrollDown(scroll);
         }
     }
-
 }
