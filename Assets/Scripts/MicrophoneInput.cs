@@ -1,5 +1,7 @@
+using System.Collections;
 using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 using Whisper.Utils;
 using Button = UnityEngine.UI.Button;
@@ -38,7 +40,7 @@ namespace Whisper.Samples
 
             //button.onClick.AddListener(OnButtonPressed);
             languageDropdown.value = languageDropdown.options
-                .FindIndex(op => op.text == whisper.language);
+                .FindIndex(op => op.text == "es");
             languageDropdown.onValueChanged.AddListener(OnLanguageChanged);
 
             translateToggle.isOn = whisper.translateToEnglish;
@@ -100,6 +102,31 @@ namespace Whisper.Samples
 
             outputText.text = text;
             UiUtils.ScrollDown(scroll);
+
+            StartCoroutine(SendStringToServer(outputText.text));
+        }
+
+        IEnumerator SendStringToServer(string data)
+        {
+            using (UnityWebRequest request = new UnityWebRequest("URL-SERVIDOR-ACA", "POST"))
+            {
+                byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(data);
+
+                request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+
+                request.SetRequestHeader("Content-Type", "application/json");
+
+                yield return request.SendWebRequest();
+
+                if (request.result == UnityWebRequest.Result.Success)
+                {
+                    UnityEngine.Debug.Log("String sent to server successfully!");
+                }
+                else
+                {
+                    UnityEngine.Debug.LogError("Error sending string to server: " + request.error);
+                }
+            }
         }
 
         private void OnLanguageChanged(int ind)
