@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using System.Data;
 using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -9,6 +11,13 @@ using Toggle = UnityEngine.UI.Toggle;
 
 namespace Whisper.Samples
 {
+    [System.Serializable]
+    public class Data
+    {
+        public string role;
+        public string content;
+    }
+
     /// <summary>
     /// Record audio clip from microphone and make a transcription.
     /// </summary>
@@ -103,29 +112,32 @@ namespace Whisper.Samples
             outputText.text = text;
             UiUtils.ScrollDown(scroll);
 
-            StartCoroutine(SendStringToServer(outputText.text));
+            StartCoroutine(SendRequest("user", outputText.text));
         }
 
-        IEnumerator SendStringToServer(string data)
+
+        IEnumerator SendRequest(string role, string content)
         {
-            using (UnityWebRequest request = new UnityWebRequest("URL-SERVIDOR-ACA", "POST"))
+            Data data = new Data();
+            data.role = role;
+            data.content = content;
+            string jsonString = JsonUtility.ToJson(data);
+            var uwr = new UnityWebRequest("https://38ee-190-193-42-113.ngrok-free.app/conversation/", "POST");
+            byte[] jsonToSend = new System.Text.UTF8Encoding().GetBytes(jsonString);
+            uwr.uploadHandler = (UploadHandler)new UploadHandlerRaw(jsonToSend);
+            uwr.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+            uwr.SetRequestHeader("Content-Type", "application/json");
+
+            //Send the request then wait here until it returns
+            yield return uwr.SendWebRequest();
+
+            if (uwr.result == UnityWebRequest.Result.ConnectionError)
             {
-                byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(data);
-
-                request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-
-                request.SetRequestHeader("Content-Type", "application/json");
-
-                yield return request.SendWebRequest();
-
-                if (request.result == UnityWebRequest.Result.Success)
-                {
-                    UnityEngine.Debug.Log("String sent to server successfully!");
-                }
-                else
-                {
-                    UnityEngine.Debug.LogError("Error sending string to server: " + request.error);
-                }
+                UnityEngine.Debug.Log("Error While Sending: " + uwr.error);
+            }
+            else
+            {
+                UnityEngine.Debug.Log("Received: " + uwr.downloadHandler.text);
             }
         }
 
