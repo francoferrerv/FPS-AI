@@ -8,6 +8,8 @@ using UnityEngine.UI;
 using Whisper.Utils;
 using Button = UnityEngine.UI.Button;
 using Toggle = UnityEngine.UI.Toggle;
+using WebSocketSharp;
+using System.IO;
 
 namespace Whisper.Samples
 {
@@ -27,6 +29,9 @@ namespace Whisper.Samples
         public MicrophoneRecord microphoneRecord;
         public bool streamSegments = true;
         public bool printLanguage = true;
+        private WebSocket ws;
+        private string serverUrl = "https://38ee-190-193-42-113.ngrok-free.app/conversation/";
+
 
         [Header("UI")]
         public Button button;
@@ -59,6 +64,82 @@ namespace Whisper.Samples
             vadToggle.onValueChanged.AddListener(OnVadChanged);
         }
 
+        void Start()
+        {
+            // Initialize WebSocket
+            ws = new WebSocket(serverUrl);
+
+            // Set event handlers
+            ws.OnMessage += OnMessageReceived;
+
+            ws.OnOpen += (sender, e) => {
+                UnityEngine.Debug.Log("WebSocket connection opened");
+            };
+
+            ws.OnClose += (sender, e) => {
+                UnityEngine.Debug.Log("WebSocket connection closed");
+            };
+
+            // Connect to the server
+            ws.Connect();
+        }
+
+        void OnApplicationQuit()
+        {
+            // Close the WebSocket connection when the application quits
+            if (ws != null)
+            {
+                ws.Close();
+            }
+        }
+
+        public void SendText(string role, string content)
+        {
+            if (ws != null && ws.IsAlive)
+            {
+                Data data = new Data();
+                data.role = role;
+                data.content = content;
+                string jsonString = JsonUtility.ToJson(data);
+                byte[] jsonToSend = new System.Text.UTF8Encoding().GetBytes(jsonString);
+                ws.Send(jsonToSend);
+                UnityEngine.Debug.Log("Sent text: " + content);
+            }
+            else
+            {
+                UnityEngine.Debug.Log("WebSocket is not connected");
+            }
+        }
+
+        private void OnMessageReceived(object sender, MessageEventArgs e)
+        {
+            UnityEngine.Debug.Log("Message from server received");
+            StartCoroutine(PlayAudioClip(e.RawData));
+        }
+
+        private IEnumerator PlayAudioClip(byte[] audioData)
+        {
+            // Load audio clip from raw audio data
+            string tempFilePath = System.IO.Path.Combine(Application.persistentDataPath, "temp_audio.wav");
+            System.IO.File.WriteAllBytes(tempFilePath, audioData);
+
+            using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("file://" + tempFilePath, AudioType.WAV))
+            {
+                yield return www.SendWebRequest();
+
+                if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
+                {
+                    UnityEngine.Debug.Log(www.error);
+                }
+                else
+                {
+                    AudioClip clip = DownloadHandlerAudioClip.GetContent(www);
+                    AudioSource audioSource = GetComponent<AudioSource>();
+                    audioSource.clip = clip;
+                    audioSource.Play();
+                }
+            }
+        }
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.R))
@@ -112,11 +193,11 @@ namespace Whisper.Samples
             outputText.text = text;
             UiUtils.ScrollDown(scroll);
 
-            StartCoroutine(SendRequest("user", outputText.text));
+            SendText("user", outputText.text);
         }
 
 
-        IEnumerator SendRequest(string role, string content)
+        /*IEnumerator SendRequest(string role, string content)
         {
             Data data = new Data();
             data.role = role;
@@ -139,7 +220,7 @@ namespace Whisper.Samples
             {
                 UnityEngine.Debug.Log("Received: " + uwr.downloadHandler.text);
             }
-        }
+        }*/
 
         private void OnLanguageChanged(int ind)
         {
