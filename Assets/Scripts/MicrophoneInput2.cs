@@ -6,6 +6,8 @@ using UnityEngine.Networking;
 using NativeWebSocket;
 using Whisper.Samples;
 using System.Data;
+using UnityEditor.VersionControl;
+using System.Net;
 
 public class MicrophoneInput : MonoBehaviour
 {
@@ -14,17 +16,13 @@ public class MicrophoneInput : MonoBehaviour
     private AudioClip recording;
     private float startTime;
     private WebSocket ws;
-    private string serverUrl = "wss://9099-190-193-42-113.ngrok-free.app/ws/audio";
+    private string serverUrl = "wss://a8ca-186-129-180-196.ngrok-free.app/ws/audio";
+    private AudioSource audioSource;
+    private float sendTime;
 
-    [System.Serializable]
-    public class Data
-    {
-        public string role;
-        public string content;
-    }
     async void Start()
     {
-        
+        audioSource = gameObject.AddComponent<AudioSource>();
         // Check if microphone access is granted
         if (Microphone.devices.Length == 0)
         {
@@ -42,6 +40,11 @@ public class MicrophoneInput : MonoBehaviour
             // Reading a plain text message
             var message = System.Text.Encoding.UTF8.GetString(bytes);
             Debug.Log("Received OnMessage! (" + message + ")");
+            float receiveTime = Time.time;
+            float roundTripTime = receiveTime - sendTime;
+            Debug.Log("Received response. Round-trip time: " + roundTripTime + " seconds");
+            ProcessReceivedAudio(bytes);
+
         };
         ws.OnOpen += () =>
         {
@@ -62,6 +65,15 @@ public class MicrophoneInput : MonoBehaviour
         await ws.Connect();
 
 
+    }
+
+    private void ProcessReceivedAudio(byte[] bytes)
+    {
+        File.WriteAllBytes(Path.Combine(Application.persistentDataPath, "response2.wav"), bytes);
+        AudioClip audioClip = ToAudioClip(Path.Combine(Application.persistentDataPath, "response2.wav"));
+        Debug.Log("Audio file saved successfully at: " + Path.Combine(Application.persistentDataPath, "response.wav"));
+        audioSource.clip = audioClip;
+        audioSource.Play();
     }
     async void Update()
     {
@@ -98,16 +110,11 @@ public class MicrophoneInput : MonoBehaviour
     public async void SendAudio(byte[] audio)
     {
         if (ws.State == WebSocketState.Open)
-        {
-            /*Data data = new Data();
-            data.role = role;
-            data.content = content;
-            string jsonString = JsonUtility.ToJson(data);
-            var uwr = new UnityWebRequest("https://38ee-190-193-42-113.ngrok-free.app/conversation/", "POST");
-            byte[] jsonToSend = new System.Text.UTF8Encoding().GetBytes(jsonString);*/
-        
+        {       
             await ws.Send(audio);
+            sendTime = Time.time;
             UnityEngine.Debug.Log("Sent audio");
+            Debug.Log("Message sent at: " + sendTime + " seconds");
         }
         else
         {
@@ -179,56 +186,6 @@ public class MicrophoneInput : MonoBehaviour
         }
     }
 
-    private byte[] ConvertAudioClipToWav(AudioClip clip)
-    {
-        using (MemoryStream stream = new MemoryStream())
-        {
-            int sampleCount = clip.samples * clip.channels;
-            int frequency = clip.frequency;
-
-            // Write WAV header
-            WriteWavHeader(stream, clip.channels, frequency, sampleCount);
-
-            // Get the audio data
-            float[] samples = new float[sampleCount];
-            clip.GetData(samples, 0);
-
-            // Convert to PCM data
-            short[] intData = new short[samples.Length];
-            byte[] bytesData = new byte[intData.Length * sizeof(short)];
-            int rescaleFactor = 32767; // to convert float to Int16
-
-            for (int i = 0; i < samples.Length; i++)
-            {
-                intData[i] = (short)(samples[i] * rescaleFactor);
-                BitConverter.GetBytes(intData[i]).CopyTo(bytesData, i * sizeof(short));
-            }
-
-            stream.Write(bytesData, 0, bytesData.Length);
-
-            return stream.ToArray();
-        }
-    }
-
-    private void WriteWavHeader(Stream stream, int channels, int sampleRate, int samples)
-    {
-        int byteRate = sampleRate * channels * 2; // 2 bytes per sample
-
-        stream.Write(new byte[] { 0x52, 0x49, 0x46, 0x46 }, 0, 4); // "RIFF"
-        stream.Write(BitConverter.GetBytes(36 + samples * 2), 0, 4); // ChunkSize
-        stream.Write(new byte[] { 0x57, 0x41, 0x56, 0x45 }, 0, 4); // "WAVE"
-        stream.Write(new byte[] { 0x66, 0x6D, 0x74, 0x20 }, 0, 4); // "fmt "
-        stream.Write(BitConverter.GetBytes(16), 0, 4); // Subchunk1Size
-        stream.Write(BitConverter.GetBytes((short)1), 0, 2); // AudioFormat
-        stream.Write(BitConverter.GetBytes((short)channels), 0, 2); // NumChannels
-        stream.Write(BitConverter.GetBytes(sampleRate), 0, 4); // SampleRate
-        stream.Write(BitConverter.GetBytes(byteRate), 0, 4); // ByteRate
-        stream.Write(BitConverter.GetBytes((short)(channels * 2)), 0, 2); // BlockAlign
-        stream.Write(BitConverter.GetBytes((short)16), 0, 2); // BitsPerSample
-        stream.Write(new byte[] { 0x64, 0x61, 0x74, 0x61 }, 0, 4); // "data"
-        stream.Write(BitConverter.GetBytes(samples * 2), 0, 4); // Subchunk2Size
-    }
-
     AudioClip TrimRecording(AudioClip originalClip, float targetDuration)
     {
         int targetSamples = (int)(targetDuration * originalClip.frequency); // Calculate the target number of samples
@@ -239,29 +196,42 @@ public class MicrophoneInput : MonoBehaviour
         return trimmedClip;
     }
 
-    IEnumerator UploadFile(byte[] wavData)
+    public static AudioClip ToAudioClip(string filePath)
     {
-        // Read the .wav file into a byte array
-        //byte[] wavData = File.ReadAllBytes(Path.Combine(Application.persistentDataPath, "Recording.wav"));
+        byte[] fileBytes = File.ReadAllBytes(filePath);
 
-        // Create a UnityWebRequest
-        string url = "https://your-server-endpoint.com/upload";
-        UnityWebRequest request = new UnityWebRequest(url, "POST");
-        request.uploadHandler = new UploadHandlerRaw(wavData);
-        request.SetRequestHeader("Content-Type", "audio/wav");
-
-        // Send the request
-        yield return request.SendWebRequest();
-
-        // Handle the response
-        if (request.result == UnityWebRequest.Result.Success)
+        if (fileBytes.Length < 44)
         {
-            Debug.Log("File uploaded successfully!");
+            throw new Exception("Invalid WAV file: Header too short");
         }
-        else
+
+        int sampleRate = BitConverter.ToInt32(fileBytes, 24);
+        int channels = BitConverter.ToInt16(fileBytes, 22);
+        int bitDepth = BitConverter.ToInt16(fileBytes, 34);
+
+        if (BitConverter.ToInt16(fileBytes, 20) != 1)
         {
-            Debug.LogError("Error uploading file: " + request.error);
+            throw new Exception("Invalid WAV file: Only PCM format is supported");
         }
+
+        if (bitDepth != 16)
+        {
+            throw new Exception("Invalid WAV file: Only 16-bit audio is supported");
+        }
+
+        int dataSize = BitConverter.ToInt32(fileBytes, 40);
+        int samples = dataSize / 2;
+
+        float[] audioData = new float[samples];
+        int dataOffset = 44;
+        for (int i = 0; i < samples; i++)
+        {
+            audioData[i] = BitConverter.ToInt16(fileBytes, dataOffset + i * 2) / 32768.0f;
+        }
+
+        AudioClip audioClip = AudioClip.Create("LoadedWav", samples, channels, sampleRate, false);
+        audioClip.SetData(audioData, 0);
+        return audioClip;
     }
 
 }
