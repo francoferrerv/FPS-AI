@@ -4,7 +4,6 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
 using NativeWebSocket;
-using Whisper.Samples;
 using System.Data;
 using UnityEditor.VersionControl;
 using System.Net;
@@ -35,7 +34,7 @@ public class MicrophoneInput : MonoBehaviour
         ws = new WebSocket(serverUrl);
 
         // Set event handlers
-        ws.OnMessage  += (bytes) =>
+        ws.OnMessage += (bytes) =>
         {
             // Reading a plain text message
             var message = System.Text.Encoding.UTF8.GetString(bytes);
@@ -78,9 +77,9 @@ public class MicrophoneInput : MonoBehaviour
     async void Update()
     {
 
-    #if !UNITY_WEBGL || UNITY_EDITOR
-            ws.DispatchMessageQueue();
-    #endif
+#if !UNITY_WEBGL || UNITY_EDITOR
+        ws.DispatchMessageQueue();
+#endif
         // Check if the "R" key is pressed
         if (Input.GetKeyDown(KeyCode.R))
         {
@@ -110,7 +109,7 @@ public class MicrophoneInput : MonoBehaviour
     public async void SendAudio(byte[] audio)
     {
         if (ws.State == WebSocketState.Open)
-        {       
+        {
             await ws.Send(audio);
             sendTime = Time.time;
             UnityEngine.Debug.Log("Sent audio");
