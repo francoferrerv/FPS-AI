@@ -5,6 +5,15 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
+public class TransformData {
+	public Vector3 position;
+	public Quaternion rotation;
+    public TransformData(Vector3 pos, Quaternion rot) {
+        position = pos;
+        rotation = rot;
+    }
+}
+
 public class NetworkManager : MonoBehaviourPunCallbacks {
 
     [SerializeField]
@@ -150,15 +159,20 @@ public class NetworkManager : MonoBehaviourPunCallbacks {
         return null;
     }
 
-    Transform GetSpawnTransform() {
+    TransformData GetSpawnTransform() {
         GameObject chair;
 
         if (normalGameStart || (chair = GetAChair()) == null) {
             int spawnIndex = Random.Range(0, spawnPoints.Length);
-            return spawnPoints[spawnIndex];
+            Transform transform = spawnPoints[spawnIndex];
+            return new TransformData(transform.position, transform.rotation);
         }
 
-        return chair.transform;
+        // Place player facing the chair
+        Vector3 position = chair.transform.position + transform.forward * 5;
+        Quaternion rotation = chair.transform.rotation;
+        rotation *= Quaternion.Euler(0, 180, 0);
+        return new TransformData(position, rotation);
     }
 
     /// <summary>
@@ -170,7 +184,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks {
         messageWindow.SetActive(true);
         sightImage.SetActive(true);
         int playerIndex = Random.Range(0, playerModel.Length);
-        Transform transform = GetSpawnTransform();
+        TransformData transform = GetSpawnTransform();
         player = PhotonNetwork.Instantiate(playerModel[playerIndex].name, transform.position, transform.rotation, 0);
         PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
         playerHealth.RespawnEvent += Respawn;
