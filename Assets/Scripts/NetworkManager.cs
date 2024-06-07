@@ -34,6 +34,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks {
     private Queue<string> messages;
     private const int messageCount = 10;
     private string nickNamePrefKey = "PlayerName";
+    private bool normalGameStart = true;
 
     /// <summary>
     /// Start is called on the frame when a script is enabled just before
@@ -84,7 +85,23 @@ public class NetworkManager : MonoBehaviourPunCallbacks {
     }
 
     /// <summary>
-    /// The button click callback function for join room.
+    /// The button click callback function for normal game start.
+    /// </summary>
+    public void NormalGameStart() {
+        normalGameStart = true;
+        JoinRoom();
+    }
+
+    /// <summary>
+    /// The button click callback function for the chair scene.
+    /// </summary>
+    public void StartWithChairScene() {
+        normalGameStart = false;
+        JoinRoom();
+    }
+
+    /// <summary>
+    /// Function for join room.
     /// </summary>
     public void JoinRoom() {
         serverWindow.SetActive(false);
@@ -122,6 +139,28 @@ public class NetworkManager : MonoBehaviourPunCallbacks {
         StartCoroutine(RespawnCoroutine(spawnTime));
     }
 
+    GameObject GetAChair() {
+        GameObject[] chairs = GameObject.FindGameObjectsWithTag("Chair");
+
+        if (chairs.Length > 0) {
+            return chairs[0];
+        }
+
+        Debug.LogError("There are no chairs in the environment");
+        return null;
+    }
+
+    Transform GetSpawnTransform() {
+        GameObject chair;
+
+        if (normalGameStart || (chair = GetAChair()) == null) {
+            int spawnIndex = Random.Range(0, spawnPoints.Length);
+            return spawnPoints[spawnIndex];
+        }
+
+        return chair.transform;
+    }
+
     /// <summary>
     /// The coroutine function to spawn player.
     /// </summary>
@@ -131,8 +170,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks {
         messageWindow.SetActive(true);
         sightImage.SetActive(true);
         int playerIndex = Random.Range(0, playerModel.Length);
-        int spawnIndex = Random.Range(0, spawnPoints.Length);
-        player = PhotonNetwork.Instantiate(playerModel[playerIndex].name, spawnPoints[spawnIndex].position, spawnPoints[spawnIndex].rotation, 0);
+        Transform transform = GetSpawnTransform();
+        player = PhotonNetwork.Instantiate(playerModel[playerIndex].name, transform.position, transform.rotation, 0);
         PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
         playerHealth.RespawnEvent += Respawn;
         playerHealth.AddMessageEvent += AddMessage;
