@@ -17,7 +17,7 @@ public class BaseNPCController : MonoBehaviour
     protected internal int damagePerHit = 1;
 
     // Start is called before the first frame update
-    protected virtual void Start()
+    void Start()
     {
         agent = this.GetComponent<NavMeshAgent>();
         health = this.GetComponent<NPCHealth>();

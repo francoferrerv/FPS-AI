@@ -20,18 +20,6 @@ public class NPCMovement : BaseNPCController
     private Quaternion chairRotation;
     private ChairState chairState = ChairState.Waiting;
 
-    // Start is called before the first frame update
-    protected override void Start()
-    {
-        base.Start();
-        GameObject chair = Chair.getRandomChair();
-        if (chair)
-        {
-            chairPosition = chair.transform.position + chair.transform.forward * 1.2f;
-            chairRotation = chair.transform.rotation;
-        }
-    }
-
     protected override void Move()
     {
         if (!NetworkManager.normalGameStart)
@@ -44,6 +32,9 @@ public class NPCMovement : BaseNPCController
     {
         if (Input.GetKeyDown(KeyCode.C))
         {
+            GameObject chair = Chair.getRandomChair();
+            chairPosition = chair.transform.position + chair.transform.forward * 1.2f;
+            chairRotation = chair.transform.rotation;
             chairState = startWalkingToChair();
         }
 
