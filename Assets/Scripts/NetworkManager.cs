@@ -43,7 +43,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks {
     private Queue<string> messages;
     private const int messageCount = 10;
     private string nickNamePrefKey = "PlayerName";
-    private bool normalGameStart = true;
+    public static bool normalGameStart = true;
 
     /// <summary>
     /// Start is called on the frame when a script is enabled just before
@@ -148,21 +148,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks {
         StartCoroutine(RespawnCoroutine(spawnTime));
     }
 
-    GameObject GetAChair() {
-        GameObject[] chairs = GameObject.FindGameObjectsWithTag("Chair");
-
-        if (chairs.Length > 0) {
-            return chairs[0];
-        }
-
-        Debug.LogError("There are no chairs in the environment");
-        return null;
-    }
-
     TransformData GetSpawnTransform() {
         GameObject chair;
 
-        if (normalGameStart || (chair = GetAChair()) == null) {
+        if (normalGameStart || (chair = Chair.getRandomChair()) == null) {
             int spawnIndex = Random.Range(0, spawnPoints.Length);
             Transform transform = spawnPoints[spawnIndex];
             return new TransformData(transform.position, transform.rotation);
