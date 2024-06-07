@@ -17,7 +17,7 @@ public class BaseNPCController : MonoBehaviour
     protected internal int damagePerHit = 1;
 
     // Start is called before the first frame update
-    void Start()
+    protected virtual void Start()
     {
         agent = this.GetComponent<NavMeshAgent>();
         health = this.GetComponent<NPCHealth>();
@@ -31,9 +31,10 @@ public class BaseNPCController : MonoBehaviour
 
     protected virtual void Move()
     {
-        
+
     }
-        void FixedUpdate()
+
+    void FixedUpdate()
     {
             animator.SetFloat("Horizontal", agent.velocity.x);
             animator.SetFloat("Vertical", agent.velocity.z);
@@ -42,5 +43,22 @@ public class BaseNPCController : MonoBehaviour
                 animator.SetTrigger("IsJumping");
             }*/
             //animator.SetBool("Running", Input.GetKey(KeyCode.LeftShift));
+    }
+
+    // Check if we've reached the destination
+    protected bool reachedDestination()
+    {
+        if (!agent.pathPending)
+        {
+            if (agent.remainingDistance <= agent.stoppingDistance)
+            {
+                if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
