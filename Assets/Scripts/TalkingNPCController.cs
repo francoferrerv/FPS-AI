@@ -20,8 +20,8 @@ public enum ChairState
 public class NPCMovement : BaseNPCController
 {
     private Vector3 chairPosition;
-    private Quaternion chairRotation;
-    private Quaternion rotatingFrom;
+    private Vector3 chairEulerAngles;
+    private Vector3 initialNPCEulerAngles;
     private float interpolationRatio;
     private ChairState chairState = ChairState.Idle;
 
@@ -41,7 +41,7 @@ public class NPCMovement : BaseNPCController
             {
                 GameObject chair = Chair.getRandomChair();
                 chairPosition = chair.transform.position + chair.transform.forward * 0.4f;
-                chairRotation = chair.transform.rotation;
+                chairEulerAngles = chair.transform.rotation.eulerAngles;
                 chairState = startWalkingToChair();
             }
             else if (chairState == ChairState.Sitting)
@@ -93,28 +93,34 @@ public class NPCMovement : BaseNPCController
 
         if (reachedDestination())
         {
-            rotatingFrom = transform.rotation;
+            initialNPCEulerAngles = transform.rotation.eulerAngles;
             interpolationRatio = 0f;
+
             return ChairState.TurningBackToChair;
         }
 
         return ChairState.WalkingToChair;
     }
 
-    protected bool stillTurning(Quaternion from, Quaternion to)
+    protected bool stillTurning()
     {
         return interpolationRatio < 1.0f;
     }
 
     protected ChairState turnBackToChair()
     {
-        Quaternion from = rotatingFrom;
-        Quaternion to = chairRotation;
+        float fromY = initialNPCEulerAngles.y;
+        float to = chairEulerAngles.y;
 
-        interpolationRatio += Time.deltaTime;
-        transform.rotation = Quaternion.Slerp(from, to, interpolationRatio);
+        interpolationRatio += Time.deltaTime / 3;
 
-        return stillTurning(from, to) ? ChairState.TurningBackToChair : ChairState.StandingToSit;
+        float x = initialNPCEulerAngles.x;
+        float y = Mathf.Lerp(fromY, to, interpolationRatio);
+        float z = initialNPCEulerAngles.z;
+
+        transform.rotation = Quaternion.Euler(x, y, z);
+
+        return stillTurning() ? ChairState.TurningBackToChair : ChairState.StandingToSit;
     }
 
     protected ChairState standToSit()
