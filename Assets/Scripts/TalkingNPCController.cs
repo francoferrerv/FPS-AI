@@ -126,7 +126,7 @@ public class NPCMovement : BaseNPCController
 
     protected ChairState sittingDown()
     {
-        bool isSittingDown = this.animator.GetCurrentAnimatorStateInfo(0).IsName("Base Layer.Stand_To_Sit");
+        bool isSittingDown = animator.GetBool("IsAboutToSit");
 
         if (isSittingDown)
         {
@@ -147,7 +147,7 @@ public class NPCMovement : BaseNPCController
 
     protected ChairState standingUp()
     {
-        bool isStandingUp = this.animator.GetCurrentAnimatorStateInfo(0).IsName("Base Layer.Stand_Up");
+        bool isStandingUp = animator.GetBool("IsStandingUp");
 
         if (isStandingUp)
         {
