@@ -10,7 +10,7 @@ public enum ChairState
 {
     Idle,
     WalkingToChair,
-    TurningBackToChair,
+    TurningAroundChair,
     StandingToSit,
     SittingDown,
     Sitting,
@@ -57,9 +57,9 @@ public class NPCMovement : BaseNPCController
                 chairState = walkToChair();
                 break;
             }
-            case ChairState.TurningBackToChair:
+            case ChairState.TurningAroundChair:
             {
-                chairState = turnBackToChair();
+                chairState = turnAroundChair();
                 break;
             }
             case ChairState.StandingToSit:
@@ -89,15 +89,13 @@ public class NPCMovement : BaseNPCController
 
     protected ChairState walkToChair()
     {
-        agent.SetDestination(chairPosition);
-
         if (reachedDestination())
         {
             initialNPCEulerAngles = transform.rotation.eulerAngles;
             interpolationRatio = 0f;
-            animator.SetTrigger("IsTurningAroundChair");
+            animator.SetTrigger("isTurningAroundChair");
 
-            return ChairState.TurningBackToChair;
+            return ChairState.TurningAroundChair;
         }
 
         return ChairState.WalkingToChair;
@@ -108,32 +106,32 @@ public class NPCMovement : BaseNPCController
         return interpolationRatio < 1.0f;
     }
 
-    protected ChairState turnBackToChair()
+    protected ChairState turnAroundChair()
     {
         float fromY = initialNPCEulerAngles.y;
-        float to = chairEulerAngles.y;
+        float toY = chairEulerAngles.y;
 
-        interpolationRatio += 10.0f / Mathf.Abs(to-fromY);
+        interpolationRatio += 10.0f / Mathf.Abs(toY-fromY);
 
         float x = initialNPCEulerAngles.x;
-        float y = Mathf.Lerp(fromY, to, interpolationRatio);
+        float y = Mathf.Lerp(fromY, toY, interpolationRatio);
         float z = initialNPCEulerAngles.z;
 
         transform.rotation = Quaternion.Euler(x, y, z);
 
-        return stillTurning() ? ChairState.TurningBackToChair : ChairState.StandingToSit;
+        return stillTurning() ? ChairState.TurningAroundChair : ChairState.StandingToSit;
     }
 
     protected ChairState standToSit()
     {
-        animator.SetTrigger("IsAboutToSit");
+        animator.SetTrigger("IsSittingDown");
 
         return ChairState.SittingDown;
     }
 
     protected ChairState sittingDown()
     {
-        bool isSittingDown = animator.GetBool("IsAboutToSit");
+        bool isSittingDown = animator.GetBool("IsSittingDown");
 
         if (isSittingDown)
         {
