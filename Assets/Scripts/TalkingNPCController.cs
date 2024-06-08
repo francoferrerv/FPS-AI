@@ -13,7 +13,8 @@ public enum ChairState
     TurningBackToChair,
     StandingToSit,
     SittingDown,
-    Sitting
+    Sitting,
+    StandingUp
 }
 
 public class NPCMovement : BaseNPCController
@@ -40,6 +41,12 @@ public class NPCMovement : BaseNPCController
                 chairPosition = chair.transform.position + chair.transform.forward * 0.5f;
                 chairRotation = chair.transform.rotation;
                 chairState = startWalkingToChair();
+                Debug.Log("a");
+            }
+            else if (chairState == ChairState.Sitting)
+            {
+                chairState = standUp();
+                Debug.Log("b");
             }
         }
 
@@ -48,21 +55,31 @@ public class NPCMovement : BaseNPCController
             case ChairState.WalkingToChair:
             {
                 chairState = walkToChair();
+                Debug.Log("1");
                 break;
             }
             case ChairState.TurningBackToChair:
             {
                 chairState = turnBackToChair();
+                Debug.Log("2");
                 break;
             }
             case ChairState.StandingToSit:
             {
                 chairState = standToSit();
+                Debug.Log("3");
                 break;
             }
             case ChairState.SittingDown:
             {
                 chairState = sittingDown();
+                Debug.Log("4");
+                break;
+            }
+            case ChairState.StandingUp:
+            {
+                chairState = standingUp();
+                Debug.Log("5");
                 break;
             }
         }
@@ -119,5 +136,24 @@ public class NPCMovement : BaseNPCController
         animator.SetTrigger("IsSitting");
 
         return ChairState.Sitting;
+    }
+
+    protected ChairState standUp()
+    {
+        animator.SetTrigger("IsStandingUp");
+
+        return ChairState.StandingUp;
+    }
+
+    protected ChairState standingUp()
+    {
+        bool isStandingUp = this.animator.GetCurrentAnimatorStateInfo(0).IsName("Base Layer.Stand_Up");
+
+        if (isStandingUp)
+        {
+            return ChairState.StandingUp;
+        }
+
+        return ChairState.Idle;
     }
 }
