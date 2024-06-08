@@ -39,9 +39,6 @@ public class NPCMovement : BaseNPCController
         {
             if (chairState == ChairState.Idle)
             {
-                GameObject chair = Chair.getRandomChair();
-                chairPosition = chair.transform.position + chair.transform.forward * 0.4f;
-                chairEulerAngles = chair.transform.rotation.eulerAngles;
                 chairState = startWalkingToChair();
             }
             else if (chairState == ChairState.Sitting)
@@ -82,6 +79,10 @@ public class NPCMovement : BaseNPCController
 
     protected ChairState startWalkingToChair()
     {
+        GameObject chair = Chair.getRandomChair();
+
+        chairPosition = chair.transform.position + chair.transform.forward * 0.4f;
+        chairEulerAngles = chair.transform.rotation.eulerAngles;
         agent.SetDestination(chairPosition);
 
         return ChairState.WalkingToChair;
