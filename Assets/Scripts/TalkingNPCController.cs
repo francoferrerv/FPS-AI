@@ -12,7 +12,8 @@ public enum ChairState
     WalkingToChair,
     TurningBackToChair,
     StandingToSit,
-    SittingDown
+    SittingDown,
+    Sitting
 }
 
 public class NPCMovement : BaseNPCController
@@ -108,8 +109,15 @@ public class NPCMovement : BaseNPCController
 
     protected ChairState sittingDown()
     {
-        // TODO
+        bool isSittingDown = this.animator.GetCurrentAnimatorStateInfo(0).IsName("Base Layer.Stand_To_Sit");
 
-        return ChairState.SittingDown;
+        if (isSittingDown)
+        {
+            return ChairState.SittingDown;
+        }
+
+        animator.SetTrigger("IsSitting");
+
+        return ChairState.Sitting;
     }
 }
