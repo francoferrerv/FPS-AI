@@ -8,17 +8,18 @@ using UnityStandardAssets.CrossPlatformInput;
 
 public enum ChairState
 {
-    Waiting,
+    Idle,
     WalkingToChair,
-    TurnBackToChair,
-    Finished
+    TurningBackToChair,
+    StandingToSit,
+    SittingDown
 }
 
 public class NPCMovement : BaseNPCController
 {
     private Vector3 chairPosition;
     private Quaternion chairRotation;
-    private ChairState chairState = ChairState.Waiting;
+    private ChairState chairState = ChairState.Idle;
 
     protected override void Move()
     {
@@ -32,10 +33,13 @@ public class NPCMovement : BaseNPCController
     {
         if (Input.GetKeyDown(KeyCode.C))
         {
-            GameObject chair = Chair.getRandomChair();
-            chairPosition = chair.transform.position + chair.transform.forward * 1.2f;
-            chairRotation = chair.transform.rotation;
-            chairState = startWalkingToChair();
+            if (chairState == ChairState.Idle)
+            {
+                GameObject chair = Chair.getRandomChair();
+                chairPosition = chair.transform.position + chair.transform.forward * 0.5f;
+                chairRotation = chair.transform.rotation;
+                chairState = startWalkingToChair();
+            }
         }
 
         switch (chairState)
@@ -45,9 +49,19 @@ public class NPCMovement : BaseNPCController
                 chairState = walkToChair();
                 break;
             }
-            case ChairState.TurnBackToChair:
+            case ChairState.TurningBackToChair:
             {
                 chairState = turnBackToChair();
+                break;
+            }
+            case ChairState.StandingToSit:
+            {
+                chairState = standToSit();
+                break;
+            }
+            case ChairState.SittingDown:
+            {
+                chairState = sittingDown();
                 break;
             }
         }
@@ -64,12 +78,38 @@ public class NPCMovement : BaseNPCController
     {
         agent.SetDestination(chairPosition);
 
-        return reachedDestination() ? ChairState.TurnBackToChair : ChairState.WalkingToChair;
+        return reachedDestination() ? ChairState.TurningBackToChair : ChairState.WalkingToChair;
+    }
+
+    protected bool stillTurning(Quaternion from, Quaternion to)
+    {
+        const double delta = 1.0;
+        Quaternion diff = Quaternion.Inverse(from) * to;
+
+        return diff.x > delta || diff.y > delta || diff.z > delta;
     }
 
     protected ChairState turnBackToChair()
     {
-        transform.rotation = Quaternion.Slerp(transform.rotation, chairRotation, Time.deltaTime * 3f);
-        return ChairState.TurnBackToChair;
+        Quaternion from = transform.rotation;
+        Quaternion to = chairRotation;
+
+        transform.rotation = Quaternion.Slerp(from, to, Time.deltaTime * 3f);
+
+        return stillTurning(from, to) ? ChairState.TurningBackToChair : ChairState.StandingToSit;
+    }
+
+    protected ChairState standToSit()
+    {
+        animator.SetTrigger("IsAboutToSit");
+
+        return ChairState.SittingDown;
+    }
+
+    protected ChairState sittingDown()
+    {
+        // TODO
+
+        return ChairState.SittingDown;
     }
 }

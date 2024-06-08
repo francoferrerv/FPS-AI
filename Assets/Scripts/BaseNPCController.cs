@@ -36,13 +36,13 @@ public class BaseNPCController : MonoBehaviour
 
     void FixedUpdate()
     {
-            animator.SetFloat("Horizontal", agent.velocity.x);
-            animator.SetFloat("Vertical", agent.velocity.z);
-            /*if (agent.velocity.y > 5f)
-            {
-                animator.SetTrigger("IsJumping");
-            }*/
-            //animator.SetBool("Running", Input.GetKey(KeyCode.LeftShift));
+        animator.SetFloat("Horizontal", agent.velocity.x);
+        animator.SetFloat("Vertical", agent.velocity.z);
+        /*if (agent.velocity.y > 5f)
+        {
+            animator.SetTrigger("IsJumping");
+        }*/
+        //animator.SetBool("Running", Input.GetKey(KeyCode.LeftShift));
     }
 
     // Check if we've reached the destination
