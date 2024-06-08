@@ -11,7 +11,6 @@ public enum ChairState
     Idle,
     WalkingToChair,
     TurningAroundChair,
-    StandingToSit,
     SittingDown,
     Sitting,
     StandingUp
@@ -57,11 +56,6 @@ public class NPCMovement : BaseNPCController
             case ChairState.TurningAroundChair:
             {
                 chairState = turnAroundChair();
-                break;
-            }
-            case ChairState.StandingToSit:
-            {
-                chairState = standToSit();
                 break;
             }
             case ChairState.SittingDown:
@@ -120,11 +114,11 @@ public class NPCMovement : BaseNPCController
 
         transform.rotation = Quaternion.Euler(x, y, z);
 
-        return stillTurning() ? ChairState.TurningAroundChair : ChairState.StandingToSit;
-    }
+        if (stillTurning())
+        {
+            return ChairState.TurningAroundChair;
+        }
 
-    protected ChairState standToSit()
-    {
         animator.SetTrigger("IsSittingDown");
 
         return ChairState.SittingDown;
