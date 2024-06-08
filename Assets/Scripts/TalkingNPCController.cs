@@ -113,7 +113,7 @@ public class NPCMovement : BaseNPCController
         float fromY = initialNPCEulerAngles.y;
         float to = chairEulerAngles.y;
 
-        interpolationRatio += Time.deltaTime / 3;
+        interpolationRatio += 10.0f / Mathf.Abs(to-fromY);
 
         float x = initialNPCEulerAngles.x;
         float y = Mathf.Lerp(fromY, to, interpolationRatio);
