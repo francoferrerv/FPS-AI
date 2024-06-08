@@ -158,9 +158,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks {
         }
 
         // Place player facing the chair
-        Vector3 position = chair.transform.position + chair.transform.forward * 5;
+        Vector3 position = chair.transform.position - chair.transform.forward * 3;
         Quaternion rotation = chair.transform.rotation;
-        rotation *= Quaternion.Euler(0, 180, 0);
+
         return new TransformData(position, rotation);
     }
 
