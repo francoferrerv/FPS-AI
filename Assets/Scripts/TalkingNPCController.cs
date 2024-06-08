@@ -95,6 +95,7 @@ public class NPCMovement : BaseNPCController
         {
             initialNPCEulerAngles = transform.rotation.eulerAngles;
             interpolationRatio = 0f;
+            animator.SetTrigger("IsTurningAroundChair");
 
             return ChairState.TurningBackToChair;
         }
