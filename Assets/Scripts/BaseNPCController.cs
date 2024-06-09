@@ -24,14 +24,8 @@ public class BaseNPCController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    protected virtual void Update()
     {
-        Move();
-    }
-
-    protected virtual void Move()
-    {
-
     }
 
     void FixedUpdate()

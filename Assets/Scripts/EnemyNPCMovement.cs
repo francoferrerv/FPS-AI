@@ -8,8 +8,7 @@ using UnityStandardAssets.CrossPlatformInput;
 
 public class EnemyNPCMovement : BaseNPCController
 {
-
-    protected override void Move()
+    protected override void Update()
     {
         if (!health.isDead)
         {

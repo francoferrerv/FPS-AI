@@ -24,8 +24,10 @@ public class NPCMovement : BaseNPCController
     private float interpolationRatio;
     private ChairState chairState = ChairState.Idle;
 
-    protected override void Move()
+    protected override void Update()
     {
+        base.Update();
+
         if (!NetworkManager.normalGameStart)
         {
             moveChairTest();
