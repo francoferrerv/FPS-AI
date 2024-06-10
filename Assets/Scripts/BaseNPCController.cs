@@ -147,7 +147,13 @@ public class BaseNPCController : MonoBehaviour
         float fromY = initialEulerAngles.y;
         float toY = chairEulerAngles.y;
 
-        interpolationRatio += 10.0f / Mathf.Abs(toY-fromY);
+        if (Mathf.Abs(toY - fromY) > 180)
+        {
+            toY += fromY < toY ? -360 : 360;
+            Debug.Log(Mathf.Abs(toY - fromY));
+        }
+
+        interpolationRatio += 20.0f / Mathf.Abs(toY-fromY);
 
         float x = initialEulerAngles.x;
         float y = Mathf.Lerp(fromY, toY, interpolationRatio);
