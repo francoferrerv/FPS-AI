@@ -25,6 +25,8 @@ public class BaseNPCController : MonoBehaviour
     [SerializeField]
     protected internal Animator animator;
     protected internal int damagePerHit = 1;
+    private GameObject gun;
+    private IKControl ikControl;
 
     private Vector3 chairPosition;
     private Vector3 chairEulerAngles;
@@ -37,6 +39,8 @@ public class BaseNPCController : MonoBehaviour
     {
         agent = this.GetComponent<NavMeshAgent>();
         health = this.GetComponent<NPCHealth>();
+        gun = GameObject.Find("PolicemanModel/Tops/TpsGun_AK47");
+        ikControl = GetComponentInChildren<IKControl>();
     }
 
     // Update is called once per frame
@@ -125,6 +129,7 @@ public class BaseNPCController : MonoBehaviour
             initialEulerAngles = transform.rotation.eulerAngles;
             interpolationRatio = 0f;
             animator.SetTrigger("isTurningAroundChair");
+            hideGun();
 
             return NPCState.TurningAroundChair;
         }
@@ -183,6 +188,20 @@ public class BaseNPCController : MonoBehaviour
             return NPCState.StandingUp;
         }
 
+        showGun();
+
         return NPCState.Idle;
+    }
+
+    private void hideGun()
+    {
+        gun.SetActive(false);
+        ikControl.enabled = false;
+    }
+
+    private void showGun()
+    {
+        gun.SetActive(true);
+        ikControl.enabled = true;
     }
 }
