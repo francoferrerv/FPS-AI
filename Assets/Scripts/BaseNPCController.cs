@@ -150,7 +150,6 @@ public class BaseNPCController : MonoBehaviour
         if (Mathf.Abs(toY - fromY) > 180)
         {
             toY += fromY < toY ? -360 : 360;
-            Debug.Log(Mathf.Abs(toY - fromY));
         }
 
         interpolationRatio += 20.0f / Mathf.Abs(toY-fromY);

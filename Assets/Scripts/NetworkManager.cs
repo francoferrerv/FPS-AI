@@ -149,17 +149,18 @@ public class NetworkManager : MonoBehaviourPunCallbacks {
     }
 
     TransformData GetSpawnTransform() {
-        GameObject chair;
-
-        if (normalGameStart || (chair = Chair.getRandomChair()) == null) {
+        if (normalGameStart) {
             int spawnIndex = Random.Range(0, spawnPoints.Length);
             Transform transform = spawnPoints[spawnIndex];
             return new TransformData(transform.position, transform.rotation);
         }
 
-        // Place player facing the chair
-        Vector3 position = chair.transform.position - chair.transform.forward * 3;
-        Quaternion rotation = chair.transform.rotation;
+        // Place player facing the NPC
+        GameObject npc = GameObject.Find("TalkingNPC");
+        Vector3 position = npc.transform.position + npc.transform.forward * 10;
+        Quaternion rotation = npc.transform.rotation;
+
+        rotation *= Quaternion.Euler(0, -180, 0);
 
         return new TransformData(position, rotation);
     }
