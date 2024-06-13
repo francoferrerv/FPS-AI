@@ -5,7 +5,8 @@ using UnityEngine;
 using UnityEngine.Networking;
 using NativeWebSocket;
 using System.Data;
-using UnityEditor.VersionControl;
+// https://forum.unity.com/threads/versioncontrol-does-not-exist-in-the-namespace-unityeditor-are-you-missing-an-assembly-reference.307912/
+// using UnityEditor.VersionControl;
 using System.Net;
 
 public class MicrophoneInput : MonoBehaviour
