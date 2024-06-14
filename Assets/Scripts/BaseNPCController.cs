@@ -26,6 +26,7 @@ public class BaseNPCController : MonoBehaviour
     {
         agent = this.GetComponent<NavMeshAgent>();
         animator = this.GetComponent<Animator>();
+        animator.SetFloat("MotionSpeed", 1.0f);
     }
 
     // Update is called once per frame
@@ -36,7 +37,7 @@ public class BaseNPCController : MonoBehaviour
 
     protected void onReachedDestination()
     {
-        animator.SetFloat("MotionSpeed", 0.0f);
+        animator.SetFloat("Speed", 0.0f);
     }
 
     protected NPCState sitOn(GameObject seat)
@@ -81,7 +82,6 @@ public class BaseNPCController : MonoBehaviour
         agent.speed = walkingSpeed;
         agent.SetDestination(targetPosition);
         animator.SetFloat("Speed", walkingSpeed);
-        animator.SetFloat("MotionSpeed", 1.0f);
     }
 
     private void UpdateState()
