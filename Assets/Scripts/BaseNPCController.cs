@@ -78,7 +78,7 @@ public class BaseNPCController : MonoBehaviour
 
     protected void walkTo(Vector3 targetPosition)
     {
-        const float walkingSpeed = 1.5f;
+        const float walkingSpeed = 2.0f;
 
         agent.speed = walkingSpeed;
         agent.SetDestination(targetPosition);
@@ -121,8 +121,8 @@ public class BaseNPCController : MonoBehaviour
         {
             initialEulerAngles = transform.rotation.eulerAngles;
             interpolationRatio = 0f;
-            animator.SetTrigger("isTurningAroundSeat");
             onReachedDestination();
+            animator.SetTrigger("isTurningAroundSeat");
 
             return NPCState.TurningAroundSeat;
         }
