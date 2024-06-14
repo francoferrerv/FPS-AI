@@ -32,10 +32,12 @@ public static class Seat
 
         if (chairs.Length > 0) {
             int chairIndex = Random.Range(0, chairs.Length);
+
             return chairs[chairIndex];
         }
 
         Debug.LogError("There are no chairs in the environment");
+
         return null;
     }
 }
