@@ -8,7 +8,6 @@ public enum NPCState
     Idle,
     WalkingToSeat,
     TurningAroundSeat,
-    SittingDown,
     Sitting,
     StandingUp
 }
@@ -100,11 +99,6 @@ public class BaseNPCController : MonoBehaviour
                 state = turnAroundSeat();
                 break;
             }
-            case NPCState.SittingDown:
-            {
-                state = sittingDown();
-                break;
-            }
             case NPCState.StandingUp:
             {
                 state = standingUp();
@@ -156,20 +150,6 @@ public class BaseNPCController : MonoBehaviour
         if (stillTurning())
         {
             return NPCState.TurningAroundSeat;
-        }
-
-        animator.SetTrigger("IsSittingDown");
-
-        return NPCState.SittingDown;
-    }
-
-    private NPCState sittingDown()
-    {
-        bool isSittingDown = animator.GetBool("IsSittingDown");
-
-        if (isSittingDown)
-        {
-            return NPCState.SittingDown;
         }
 
         animator.SetTrigger("IsSitting");
