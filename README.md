@@ -1,7 +1,7 @@
 # Trabajo Práctico Profesional. Equipo 39
 
-## Juego Inicial
-https://github.com/Armour/Multiplayer-FPS
+## Informe
+[Trabajo Profesional Equipo 39](https://docs.google.com/document/d/1lHw3KiCeLMCV55vzw0uoxWdT0RyMdxAKfcS6rE5wAAU/edit)
 
 ## Versión Editor Unity
 
