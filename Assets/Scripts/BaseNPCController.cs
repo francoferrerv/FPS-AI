@@ -18,8 +18,11 @@ public class BaseNPCController : MonoBehaviour
     private Vector3 seatEulerAngles;
     private Vector3 initialEulerAngles;
     private float interpolationRatio;
+    private CharacterController controller;
     protected NPCState state = NPCState.Idle;
     protected float speed;
+    public AudioClip[] FootstepAudioClips;
+    [Range(0, 1)] public float FootstepAudioVolume = 0.5f;
 
     // Start is called before the first frame update
     void Start()
@@ -27,6 +30,7 @@ public class BaseNPCController : MonoBehaviour
         agent = this.GetComponent<NavMeshAgent>();
         animator = this.GetComponent<Animator>();
         animator.SetFloat("MotionSpeed", 1.0f);
+        controller = GetComponent<CharacterController>();
     }
 
     // Update is called once per frame
@@ -163,5 +167,17 @@ public class BaseNPCController : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void OnFootstep(AnimationEvent animationEvent)
+    {
+        if (animationEvent.animatorClipInfo.weight > 0.5f)
+        {
+            if (FootstepAudioClips.Length > 0)
+            {
+                var index = Random.Range(0, FootstepAudioClips.Length);
+                AudioSource.PlayClipAtPoint(FootstepAudioClips[index], transform.TransformPoint(controller.center), FootstepAudioVolume);
+            }
+        }
     }
 }
