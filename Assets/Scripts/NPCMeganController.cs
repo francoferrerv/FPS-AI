@@ -29,7 +29,6 @@ public class NPCMeganController: NPCController
     {
         if (Input.GetKeyDown(KeyCode.C))
         {
-            Debug.Log("C");
             if (state == State.Idle)
             {
                 sitOnClosestSeat();
