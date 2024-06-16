@@ -21,19 +21,24 @@ public class Seat
 
     public static Seat getClosestSeat(Vector3 targetPosition)
     {
-        GameObject[] seats = GameObject.FindGameObjectsWithTag("Bench");
-        BenchStatus closestBenchStatus = null;
-        string closestPlaceName = "";
-        Vector3 closestPosition = Vector3.zero;
-        float minimunDistance = float.PositiveInfinity;
+        List<BenchStatus> benchesStatus = getAvailableBenchesStatuses();
 
-        foreach (GameObject seat in seats)
+        if (benchesStatus.Count <= 0)
         {
-            BenchStatus benchStatus = seat.GetComponent<BenchStatus>();
+            return null;
+        }
+
+        string closestPlaceName = "";
+        float minimunDistance = float.PositiveInfinity;
+        BenchStatus closestBenchStatus = null;
+        Vector3 closestPosition = Vector3.zero;
+
+        foreach (var benchStatus in benchesStatus)
+        {
             Vector3 seatPosition;
             string placeName;
 
-            if (benchStatus != null && benchStatus.GetAvailable(out placeName, out seatPosition))
+            if (benchStatus.GetAvailable(out placeName, out seatPosition))
             {
                 float distance = (targetPosition - seatPosition).magnitude;
 
@@ -47,34 +52,21 @@ public class Seat
             }
         }
 
-        if (closestBenchStatus != null)
-        {
-            closestBenchStatus.SetAvailability(closestPlaceName, false);
+        closestBenchStatus.SetAvailability(closestPlaceName, false);
 
-            return new Seat(closestBenchStatus, closestPlaceName, closestPosition);
-        }
-
-        return null;
+        return new Seat(closestBenchStatus, closestPlaceName, closestPosition);
     }
 
     public static Seat getRandomSeat()
     {
-        GameObject[] seats = GameObject.FindGameObjectsWithTag("Bench");
-        GameObject[] availableSeats = Array.FindAll(seats, seat =>
+        List<BenchStatus> benchesStatus = getAvailableBenchesStatuses();
+
+        if (benchesStatus.Count > 0)
         {
             Vector3 seatPosition;
             string placeName;
-            BenchStatus benchStatus = seat.GetComponent<BenchStatus>();
-
-            return benchStatus.GetAvailable(out placeName, out seatPosition);
-        });
-
-        if (availableSeats.Length > 0) {
-            int seatIndex = UnityEngine.Random.Range(0, availableSeats.Length);
-            Vector3 seatPosition;
-            string placeName;
-            GameObject seat = availableSeats[seatIndex];
-            BenchStatus benchStatus = seat.GetComponent<BenchStatus>();
+            int seatIndex = UnityEngine.Random.Range(0, benchesStatus.Count);
+            BenchStatus benchStatus = benchesStatus[seatIndex];
 
             benchStatus.GetAvailable(out placeName, out seatPosition);
             benchStatus.SetAvailability(placeName, false);
@@ -83,5 +75,26 @@ public class Seat
         }
 
         return null;
+    }
+
+
+    private static List<BenchStatus> getAvailableBenchesStatuses()
+    {
+        List<BenchStatus> benchesStatus = new List<BenchStatus>();
+        GameObject[] benches = GameObject.FindGameObjectsWithTag("Bench");
+
+        foreach (var bench in benches)
+        {
+            Vector3 benchPosition;
+            string placeName;
+            BenchStatus benchStatus = bench.GetComponent<BenchStatus>();
+
+            if (benchStatus.GetAvailable(out placeName, out benchPosition))
+            {
+                benchesStatus.Add(benchStatus);
+            }
+        }
+
+        return benchesStatus;
     }
 }
