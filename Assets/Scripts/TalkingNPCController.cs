@@ -6,17 +6,25 @@ using UnityEngine.AI;
 public class TalkingNPCController: BaseController
 {
     public AudioClip[] FootstepAudioClips;
+    public GameObject player;
     [Range(0, 1)] public float FootstepAudioVolume = 0.5f;
     private CharacterController controller;
+    private PlayerController playerController;
 
     protected override void Start()
     {
         base.Start();
         controller = GetComponent<CharacterController>();
+        playerController = player.GetComponent<PlayerController>();
     }
 
     protected override void Update()
     {
+        if (playerController.paused)
+        {
+            return;
+        }
+
         base.Update();
         moveChairTest();
     }
