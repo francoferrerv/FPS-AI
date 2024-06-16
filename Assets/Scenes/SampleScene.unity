@@ -18647,9 +18647,6 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2793cbe2b3217e2f6a7884a5839717e7, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1675072393}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2793cbe2b3217e2f6a7884a5839717e7, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 1675072392}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2793cbe2b3217e2f6a7884a5839717e7, type: 3}
       insertIndex: -1
@@ -18657,6 +18654,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2793cbe2b3217e2f6a7884a5839717e7, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1675072397}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2793cbe2b3217e2f6a7884a5839717e7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1675072399}
     - targetCorrespondingSourceObject: {fileID: 6507346442333638635, guid: 2793cbe2b3217e2f6a7884a5839717e7, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1474983454}
@@ -28401,31 +28401,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &1675072393
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 66989516}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8a368785b54c55f3ba97c7d6b8c2b55, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  FootstepAudioClips:
-  - {fileID: 8300000, guid: 72f526a6a9890f643a88e85a61c86c8a, type: 3}
-  - {fileID: 8300000, guid: 85016e0f2b01da248b9663dd49a161b0, type: 3}
-  - {fileID: 8300000, guid: 186de84b3207156479abe98f4958fed0, type: 3}
-  - {fileID: 8300000, guid: 1a91fcd19acf1e54bba0945d9f390849, type: 3}
-  - {fileID: 8300000, guid: 14e8a8d2158bec840b56c54f5266e692, type: 3}
-  - {fileID: 8300000, guid: 29841e7d5bbfb5b419c9ad16ca8bc4c1, type: 3}
-  - {fileID: 8300000, guid: dd1af302b8902684d9381de1f2d3a5af, type: 3}
-  - {fileID: 8300000, guid: 67c8b33e424ccdc4486edf538ab91c5a, type: 3}
-  - {fileID: 8300000, guid: 274649b0e221539409070ebf6c18918b, type: 3}
-  - {fileID: 8300000, guid: a3194b8bbc96ef84fab1f98f4b7dae3e, type: 3}
-  player: {fileID: 4751987497422597512}
-  FootstepAudioVolume: 0.5
 --- !u!136 &1675072395
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -28475,6 +28450,31 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1675072399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 66989516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94f012d2cdf76aa43ade60976fb4ac92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FootstepAudioClips:
+  - {fileID: 8300000, guid: 72f526a6a9890f643a88e85a61c86c8a, type: 3}
+  - {fileID: 8300000, guid: 85016e0f2b01da248b9663dd49a161b0, type: 3}
+  - {fileID: 8300000, guid: 186de84b3207156479abe98f4958fed0, type: 3}
+  - {fileID: 8300000, guid: 1a91fcd19acf1e54bba0945d9f390849, type: 3}
+  - {fileID: 8300000, guid: 14e8a8d2158bec840b56c54f5266e692, type: 3}
+  - {fileID: 8300000, guid: 29841e7d5bbfb5b419c9ad16ca8bc4c1, type: 3}
+  - {fileID: 8300000, guid: dd1af302b8902684d9381de1f2d3a5af, type: 3}
+  - {fileID: 8300000, guid: 67c8b33e424ccdc4486edf538ab91c5a, type: 3}
+  - {fileID: 8300000, guid: 274649b0e221539409070ebf6c18918b, type: 3}
+  - {fileID: 8300000, guid: a3194b8bbc96ef84fab1f98f4b7dae3e, type: 3}
+  FootstepAudioVolume: 0.5
+  player: {fileID: 4751987497422597512}
 --- !u!1001 &1675505928
 PrefabInstance:
   m_ObjectHideFlags: 0
