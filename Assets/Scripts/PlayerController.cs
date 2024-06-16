@@ -6,13 +6,11 @@ using StarterAssets;
 
 public class PlayerController: BaseController
 {
-    protected internal ThirdPersonController thirdPersonController;
-    protected bool paused = false;
+    public bool paused { get; private set; }
 
     protected override void Start()
     {
         base.Start();
-        thirdPersonController = this.GetComponent<ThirdPersonController>();
     }
 
     protected override void Update()
@@ -22,24 +20,17 @@ public class PlayerController: BaseController
             Pause();
         }
 
-        if (!thirdPersonController.enabled)
+        if (paused)
         {
-            base.Update();
+            return;
         }
+
+        base.Update();
     }
 
     protected void Pause()
     {
         paused = !paused;
         thirdPersonController.enabled = !paused;
-
-        if (paused)
-        {
-            state = NPCState.Idle;
-            animator.SetBool("Grounded", true);
-            animator.SetBool("Jump", false);
-            animator.SetBool("FreeFall", false);
-            animator.SetFloat("Speed", 0.0f);
-        }
     }
 }
