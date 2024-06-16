@@ -29,12 +29,12 @@ public class PlayerController: BaseController
 
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            if (state == NPCState.Idle)
+            if (state == State.Idle)
             {
                 agent.enabled = true;
                 state = sitOnClosestSeat();
 
-                if (state == NPCState.Idle)
+                if (state == State.Idle)
                 {
                     agent.enabled = false;
                 }
@@ -43,7 +43,7 @@ public class PlayerController: BaseController
                     thirdPersonController.enabled = false;
                 }
             }
-            else if (state == NPCState.Sitting)
+            else if (state == State.Sitting)
             {
                 thirdPersonController.enabled = true;
                 agent.enabled = false;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public enum NPCState
+public enum State
 {
     Idle,
     WalkingToSeat,
@@ -18,7 +18,7 @@ public class BaseController : MonoBehaviour
     private Seat seat;
     private Vector3 initialEulerAngles;
     private float interpolationRatio;
-    protected NPCState state = NPCState.Idle;
+    protected State state = State.Idle;
     protected float speed;
 
     // Start is called before the first frame update
@@ -40,38 +40,38 @@ public class BaseController : MonoBehaviour
         animator.SetFloat("Speed", 0.0f);
     }
 
-    protected NPCState sit()
+    protected State sit()
     {
         if (seat != null)
         {
             walkTo(seat.position);
 
-            return NPCState.WalkingToSeat;
+            return State.WalkingToSeat;
         }
 
-        return NPCState.Idle;
+        return State.Idle;
     }
 
-    protected NPCState sitOnClosestSeat()
+    protected State sitOnClosestSeat()
     {
         seat = Seat.getClosestSeat(agent.transform.position);
 
         return sit();
     }
 
-    protected NPCState sitOnRandomSeat()
+    protected State sitOnRandomSeat()
     {
         seat = Seat.getRandomSeat();
 
         return sit();
     }
 
-    protected NPCState standUp()
+    protected State standUp()
     {
         animator.SetTrigger("IsStandingUp");
         seat.status.SetAvailability(seat.placeName, true);
 
-        return NPCState.Idle;
+        return State.Idle;
     }
 
     protected void walkTo(Vector3 targetPosition)
@@ -87,12 +87,12 @@ public class BaseController : MonoBehaviour
     {
         switch (state)
         {
-            case NPCState.WalkingToSeat:
+            case State.WalkingToSeat:
             {
                 state = walkToSeat();
                 break;
             }
-            case NPCState.TurningAroundSeat:
+            case State.TurningAroundSeat:
             {
                 state = turnAroundSeat();
                 break;
@@ -100,7 +100,7 @@ public class BaseController : MonoBehaviour
         }
     }
 
-    private NPCState walkToSeat()
+    private State walkToSeat()
     {
         if (reachedDestination())
         {
@@ -109,10 +109,10 @@ public class BaseController : MonoBehaviour
             onReachedDestination();
             animator.SetTrigger("isTurningAroundSeat");
 
-            return NPCState.TurningAroundSeat;
+            return State.TurningAroundSeat;
         }
 
-        return NPCState.WalkingToSeat;
+        return State.WalkingToSeat;
     }
 
     private bool stillTurning()
@@ -120,7 +120,7 @@ public class BaseController : MonoBehaviour
         return interpolationRatio < 1.0f;
     }
 
-    private NPCState turnAroundSeat()
+    private State turnAroundSeat()
     {
         float fromY = initialEulerAngles.y;
         float toY = seat.status.GetEulerAngles().y;
@@ -140,12 +140,12 @@ public class BaseController : MonoBehaviour
 
         if (stillTurning())
         {
-            return NPCState.TurningAroundSeat;
+            return State.TurningAroundSeat;
         }
 
         animator.SetTrigger("IsSittingDown");
 
-        return NPCState.Sitting;
+        return State.Sitting;
     }
 
     private bool reachedDestination()

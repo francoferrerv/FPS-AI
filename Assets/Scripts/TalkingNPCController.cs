@@ -33,11 +33,11 @@ public class TalkingNPCController: BaseController
     {
         if (Input.GetKeyDown(KeyCode.C))
         {
-            if (state == NPCState.Idle)
+            if (state == State.Idle)
             {
                 state = sitOnClosestSeat();
             }
-            else if (state == NPCState.Sitting)
+            else if (state == State.Sitting)
             {
                 state = standUp();
             }
