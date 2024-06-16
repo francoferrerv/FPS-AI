@@ -29,18 +29,10 @@ public class BenchStatus: SeatStatus
 
     public override bool GetAvailable(out string name, out Vector3 position)
     {
-        if (!leftAvailable && !rightAvailable)
-        {
-            name = "";
-            position = Vector3.zero;
-
-            return false;
-        }
-
         name = leftAvailable ? "left" : "right";
         position = leftAvailable ? leftPosition : rightPosition;
 
-        return true;
+        return IsAvailable();
     }
 
     public override Vector3 GetEulerAngles()
