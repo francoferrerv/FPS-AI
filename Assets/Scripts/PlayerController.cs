@@ -31,9 +31,17 @@ public class PlayerController: BaseController
         {
             if (state == NPCState.Idle)
             {
-                thirdPersonController.enabled = false;
                 agent.enabled = true;
                 state = sitOnClosestSeat();
+
+                if (state == NPCState.Idle)
+                {
+                    agent.enabled = false;
+                }
+                else
+                {
+                    thirdPersonController.enabled = false;
+                }
             }
             else if (state == NPCState.Sitting)
             {
@@ -42,6 +50,7 @@ public class PlayerController: BaseController
                 state = standUp();
             }
         }
+
         base.Update();
     }
 
