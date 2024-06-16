@@ -11,7 +11,7 @@ public enum NPCState
     Sitting
 }
 
-public class BaseNPCController : MonoBehaviour
+public class BaseController : MonoBehaviour
 {
     protected internal NavMeshAgent agent;
     protected internal Animator animator;

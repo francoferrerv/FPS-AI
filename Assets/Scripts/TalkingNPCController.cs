@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class TalkingNPCController: BaseNPCController
+public class TalkingNPCController: BaseController
 {
     protected override void Update()
     {
