@@ -50,13 +50,27 @@ public class BaseController : MonoBehaviour
         return NPCState.WalkingToSeat;
     }
 
-    protected NPCState sitOnClosestSeat()
+    protected NPCState sitOn(Seat seat)
     {
-        GameObject seat = Seat.getClosestSeat(agent.transform.position);
-
-        sitOn(seat);
+        seatEulerAngles = seat.eulerAngles;
+        walkTo(seat.position);
 
         return NPCState.WalkingToSeat;
+    }
+
+
+    protected NPCState sitOnClosestSeat()
+    {
+        Seat seat = Seat.getClosestSeat(agent.transform.position);
+
+        if (seat != null)
+        {
+            sitOn(seat);
+
+            return NPCState.WalkingToSeat;
+        }
+
+        return NPCState.Idle;
     }
 
     protected NPCState sitOnRandomSeat()
