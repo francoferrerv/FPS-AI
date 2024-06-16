@@ -32,7 +32,7 @@ public class PlayerController: BaseController
             if (state == State.Idle)
             {
                 agent.enabled = true;
-                state = sitOnClosestSeat();
+                sitOnClosestSeat();
 
                 if (state == State.Idle)
                 {
@@ -47,7 +47,7 @@ public class PlayerController: BaseController
             {
                 thirdPersonController.enabled = true;
                 agent.enabled = false;
-                state = standUp();
+                standUp();
             }
         }
 

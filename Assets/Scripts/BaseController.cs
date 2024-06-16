@@ -40,38 +40,36 @@ public class BaseController : MonoBehaviour
         animator.SetFloat("Speed", 0.0f);
     }
 
-    protected State sit()
+    protected void sit()
     {
         if (seat != null)
         {
             walkTo(seat.position);
+            state = State.WalkingToSeat;
 
-            return State.WalkingToSeat;
+            return;
         }
 
-        return State.Idle;
+        state = State.Idle;
     }
 
-    protected State sitOnClosestSeat()
+    protected void sitOnClosestSeat()
     {
         seat = Seat.getClosestSeat(agent.transform.position);
-
-        return sit();
+        sit();
     }
 
-    protected State sitOnRandomSeat()
+    protected void sitOnRandomSeat()
     {
         seat = Seat.getRandomSeat();
-
-        return sit();
+        sit();
     }
 
-    protected State standUp()
+    protected void standUp()
     {
         animator.SetTrigger("IsStandingUp");
         seat.status.SetAvailability(seat.placeName, true);
-
-        return State.Idle;
+        state = State.Idle;
     }
 
     protected void walkTo(Vector3 targetPosition)
@@ -89,18 +87,18 @@ public class BaseController : MonoBehaviour
         {
             case State.WalkingToSeat:
             {
-                state = walkToSeat();
+                walkToSeat();
                 break;
             }
             case State.TurningAroundSeat:
             {
-                state = turnAroundSeat();
+                turnAroundSeat();
                 break;
             }
         }
     }
 
-    private State walkToSeat()
+    private void walkToSeat()
     {
         if (reachedDestination())
         {
@@ -108,11 +106,12 @@ public class BaseController : MonoBehaviour
             interpolationRatio = 0f;
             onReachedDestination();
             animator.SetTrigger("isTurningAroundSeat");
+            state = State.TurningAroundSeat;
 
-            return State.TurningAroundSeat;
+            return;
         }
 
-        return State.WalkingToSeat;
+        state = State.WalkingToSeat;
     }
 
     private bool stillTurning()
@@ -120,7 +119,7 @@ public class BaseController : MonoBehaviour
         return interpolationRatio < 1.0f;
     }
 
-    private State turnAroundSeat()
+    private void turnAroundSeat()
     {
         float fromY = initialEulerAngles.y;
         float toY = seat.status.GetEulerAngles().y;
@@ -140,12 +139,13 @@ public class BaseController : MonoBehaviour
 
         if (stillTurning())
         {
-            return State.TurningAroundSeat;
+            state = State.TurningAroundSeat;
+
+            return;
         }
 
         animator.SetTrigger("IsSittingDown");
-
-        return State.Sitting;
+        state = State.Sitting;
     }
 
     private bool reachedDestination()

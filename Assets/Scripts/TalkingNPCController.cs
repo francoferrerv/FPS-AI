@@ -35,11 +35,11 @@ public class TalkingNPCController: BaseController
         {
             if (state == State.Idle)
             {
-                state = sitOnClosestSeat();
+                sitOnClosestSeat();
             }
             else if (state == State.Sitting)
             {
-                state = standUp();
+                standUp();
             }
         }
     }
