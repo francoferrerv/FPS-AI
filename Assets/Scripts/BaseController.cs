@@ -40,15 +40,6 @@ public class BaseController : MonoBehaviour
         animator.SetFloat("Speed", 0.0f);
     }
 
-    protected NPCState sitOn(GameObject seat)
-    {
-        Vector3 targetPosition = seat.transform.position + seat.transform.forward * 1.0f;
-
-        walkTo(targetPosition);
-
-        return NPCState.WalkingToSeat;
-    }
-
     protected NPCState sit()
     {
         if (seat != null)
