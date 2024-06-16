@@ -5,31 +5,34 @@ using System.Collections.Generic;
 
 public class Seat
 {
+    public string availableName { get; private set; }
+    public SeatStatus seatStatus { get; private set; }
     public Vector3 position { get; private set; }
     public Vector3 eulerAngles { get; private set; }
 
-    public Seat(Vector3 pos, Vector3 angles)
+    public Seat(SeatStatus status, string name, Vector3 closestPosition)
     {
-        position = pos;
-        eulerAngles = angles;
+        availableName = name;
+        seatStatus = status;
+        position = closestPosition;
+        eulerAngles = status.GetEulerAngles();
     }
 
     public static Seat getClosestSeat(Vector3 targetPosition)
     {
         GameObject[] seats = GameObject.FindGameObjectsWithTag("Bench");
         BenchStatus closestBenchStatus = null;
-        Vector3 closestPosition = Vector3.zero;
-        Vector3 closestEulerAngles = Vector3.zero;
         string closestName = "";
+        Vector3 closestPosition = Vector3.zero;
         float minimunDistance = float.PositiveInfinity;
 
         foreach (GameObject seat in seats)
         {
             BenchStatus benchStatus = seat.GetComponent<BenchStatus>();
-            Vector3 seatPosition, eulerAngles;
+            Vector3 seatPosition;
             string name;
 
-            if (benchStatus && benchStatus.GetAvailablePosition(out seatPosition, out eulerAngles, out name))
+            if (benchStatus != null && benchStatus.GetAvailable(out name, out seatPosition))
             {
                 float distance = (targetPosition - seatPosition).magnitude;
 
@@ -37,9 +40,8 @@ public class Seat
                 {
                     minimunDistance = distance;
                     closestBenchStatus = benchStatus;
-                    closestPosition = seatPosition;
-                    closestEulerAngles = eulerAngles;
                     closestName = name;
+                    closestPosition = seatPosition;
                 }
             }
         }
@@ -48,7 +50,7 @@ public class Seat
         {
             closestBenchStatus.mark(closestName, false);
 
-            return new Seat(closestPosition, closestEulerAngles);
+            return new Seat(closestBenchStatus, closestName, closestPosition);
         }
 
         return null;

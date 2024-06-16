@@ -9,7 +9,7 @@ public class BenchStatus: SeatStatus
     protected bool rightAvailable = true;
     protected Vector3 leftPosition = Vector3.zero;
     protected Vector3 rightPosition = Vector3.zero;
-    protected Vector3 angles = Vector3.zero;
+    protected Vector3 eulerAngles = Vector3.zero;
 
     protected void Start()
     {
@@ -19,34 +19,34 @@ public class BenchStatus: SeatStatus
         rightPosition = transform.position
             + transform.forward * 1.2f
             + transform.right * 1.5f;
-        angles = transform.rotation.eulerAngles;
+        eulerAngles = transform.rotation.eulerAngles;
     }
 
-    public override bool GetAvailablePosition(out Vector3 position, out Vector3 eulerAngles, out string name)
+    public override bool GetAvailable(out string name, out Vector3 position)
     {
         if (!leftAvailable && !rightAvailable)
         {
-            eulerAngles = Vector3.zero;
-            name = "";
-            position = Vector3.zero;
-
-            return false;
+            return base.GetAvailable(out name, out position);
         }
 
-        eulerAngles = angles;
         name = leftAvailable ? "left" : "right";
         position = leftAvailable ? leftPosition : rightPosition;
 
         return true;
     }
 
-    public virtual void mark(string name, bool available)
+    public override Vector3 GetEulerAngles()
+    {
+        return eulerAngles;
+    }
+
+    public override void mark(string name, bool available)
     {
         if (name == "left")
         {
             leftAvailable = available;
         }
-        else if (name == "right")
+        else
         {
             rightAvailable = available;
         }

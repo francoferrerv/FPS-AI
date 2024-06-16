@@ -15,7 +15,7 @@ public class BaseController : MonoBehaviour
 {
     protected internal NavMeshAgent agent;
     protected internal Animator animator;
-    private Vector3 seatEulerAngles;
+    private Seat seat;
     private Vector3 initialEulerAngles;
     private float interpolationRatio;
     protected NPCState state = NPCState.Idle;
@@ -44,15 +44,15 @@ public class BaseController : MonoBehaviour
     {
         Vector3 targetPosition = seat.transform.position + seat.transform.forward * 1.0f;
 
-        seatEulerAngles = seat.transform.rotation.eulerAngles;
         walkTo(targetPosition);
 
         return NPCState.WalkingToSeat;
     }
 
-    protected NPCState sitOn(Seat seat)
+    protected NPCState sit()
     {
-        seatEulerAngles = seat.eulerAngles;
+        Vector3 position;
+
         walkTo(seat.position);
 
         return NPCState.WalkingToSeat;
@@ -61,11 +61,11 @@ public class BaseController : MonoBehaviour
 
     protected NPCState sitOnClosestSeat()
     {
-        Seat seat = Seat.getClosestSeat(agent.transform.position);
+        seat = Seat.getClosestSeat(agent.transform.position);
 
         if (seat != null)
         {
-            sitOn(seat);
+            sit();
 
             return NPCState.WalkingToSeat;
         }
@@ -85,6 +85,7 @@ public class BaseController : MonoBehaviour
     protected NPCState standUp()
     {
         animator.SetTrigger("IsStandingUp");
+        seat.seatStatus.mark(seat.availableName, true);
 
         return NPCState.Idle;
     }
@@ -138,7 +139,7 @@ public class BaseController : MonoBehaviour
     private NPCState turnAroundSeat()
     {
         float fromY = initialEulerAngles.y;
-        float toY = seatEulerAngles.y;
+        float toY = seat.seatStatus.GetEulerAngles().y;
 
         if (Mathf.Abs(toY - fromY) > 180)
         {

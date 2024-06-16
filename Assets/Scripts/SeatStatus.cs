@@ -5,13 +5,17 @@ using UnityEngine.AI;
 
 public class SeatStatus: MonoBehaviour
 {
-    public virtual bool GetAvailablePosition(out Vector3 position, out Vector3 eulerAngles, out string name)
+    public virtual bool GetAvailable(out string name, out Vector3 position)
     {
-        eulerAngles = Vector3.zero;
         name = "";
         position = Vector3.zero;
 
         return false;
+    }
+
+    public virtual Vector3 GetEulerAngles()
+    {
+        return Vector3.zero;
     }
 
     public virtual void mark(string name, bool available)
