@@ -3,23 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class SeatStatus: MonoBehaviour
+public abstract class SeatStatus: MonoBehaviour
 {
-    public virtual bool GetAvailable(out string name, out Vector3 position)
-    {
-        name = "";
-        position = Vector3.zero;
+    public abstract bool GetAvailable(out string name, out Vector3 position);
 
-        return false;
-    }
+    public abstract Vector3 GetEulerAngles();
 
-    public virtual Vector3 GetEulerAngles()
-    {
-        return Vector3.zero;
-    }
-
-    public virtual void SetAvailability(string name, bool available)
-    {
-
-    }
+    public abstract void SetAvailability(string name, bool available);
 }

@@ -26,7 +26,10 @@ public class BenchStatus: SeatStatus
     {
         if (!leftAvailable && !rightAvailable)
         {
-            return base.GetAvailable(out name, out position);
+            name = "";
+            position = Vector3.zero;
+
+            return false;
         }
 
         name = leftAvailable ? "left" : "right";
