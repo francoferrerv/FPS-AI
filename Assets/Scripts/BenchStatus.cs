@@ -40,7 +40,7 @@ public class BenchStatus: SeatStatus
         return eulerAngles;
     }
 
-    public override void mark(string name, bool available)
+    public override void SetAvailability(string name, bool available)
     {
         if (name == "left")
         {

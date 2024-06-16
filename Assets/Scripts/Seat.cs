@@ -5,24 +5,24 @@ using System.Collections.Generic;
 
 public class Seat
 {
-    public string availableName { get; private set; }
-    public SeatStatus seatStatus { get; private set; }
+    public string placeName { get; private set; }
+    public SeatStatus status { get; private set; }
     public Vector3 position { get; private set; }
     public Vector3 eulerAngles { get; private set; }
 
-    public Seat(SeatStatus status, string name, Vector3 closestPosition)
+    public Seat(SeatStatus status, string placeName, Vector3 position)
     {
-        availableName = name;
-        seatStatus = status;
-        position = closestPosition;
-        eulerAngles = status.GetEulerAngles();
+        this.placeName = placeName;
+        this.status = status;
+        this.position = position;
+        this.eulerAngles = status.GetEulerAngles();
     }
 
     public static Seat getClosestSeat(Vector3 targetPosition)
     {
         GameObject[] seats = GameObject.FindGameObjectsWithTag("Bench");
         BenchStatus closestBenchStatus = null;
-        string closestName = "";
+        string closestPlaceName = "";
         Vector3 closestPosition = Vector3.zero;
         float minimunDistance = float.PositiveInfinity;
 
@@ -30,9 +30,9 @@ public class Seat
         {
             BenchStatus benchStatus = seat.GetComponent<BenchStatus>();
             Vector3 seatPosition;
-            string name;
+            string placeName;
 
-            if (benchStatus != null && benchStatus.GetAvailable(out name, out seatPosition))
+            if (benchStatus != null && benchStatus.GetAvailable(out placeName, out seatPosition))
             {
                 float distance = (targetPosition - seatPosition).magnitude;
 
@@ -40,7 +40,7 @@ public class Seat
                 {
                     minimunDistance = distance;
                     closestBenchStatus = benchStatus;
-                    closestName = name;
+                    closestPlaceName = placeName;
                     closestPosition = seatPosition;
                 }
             }
@@ -48,9 +48,9 @@ public class Seat
 
         if (closestBenchStatus != null)
         {
-            closestBenchStatus.mark(closestName, false);
+            closestBenchStatus.SetAvailability(closestPlaceName, false);
 
-            return new Seat(closestBenchStatus, closestName, closestPosition);
+            return new Seat(closestBenchStatus, closestPlaceName, closestPosition);
         }
 
         return null;

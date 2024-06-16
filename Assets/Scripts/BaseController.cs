@@ -85,7 +85,7 @@ public class BaseController : MonoBehaviour
     protected NPCState standUp()
     {
         animator.SetTrigger("IsStandingUp");
-        seat.seatStatus.mark(seat.availableName, true);
+        seat.status.SetAvailability(seat.placeName, true);
 
         return NPCState.Idle;
     }
@@ -139,7 +139,7 @@ public class BaseController : MonoBehaviour
     private NPCState turnAroundSeat()
     {
         float fromY = initialEulerAngles.y;
-        float toY = seat.seatStatus.GetEulerAngles().y;
+        float toY = seat.status.GetEulerAngles().y;
 
         if (Mathf.Abs(toY - fromY) > 180)
         {

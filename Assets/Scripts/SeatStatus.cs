@@ -18,7 +18,7 @@ public class SeatStatus: MonoBehaviour
         return Vector3.zero;
     }
 
-    public virtual void mark(string name, bool available)
+    public virtual void SetAvailability(string name, bool available)
     {
 
     }
