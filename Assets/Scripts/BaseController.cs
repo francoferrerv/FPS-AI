@@ -51,21 +51,9 @@ public class BaseController : MonoBehaviour
 
     protected NPCState sit()
     {
-        Vector3 position;
-
-        walkTo(seat.position);
-
-        return NPCState.WalkingToSeat;
-    }
-
-
-    protected NPCState sitOnClosestSeat()
-    {
-        seat = Seat.getClosestSeat(agent.transform.position);
-
         if (seat != null)
         {
-            sit();
+            walkTo(seat.position);
 
             return NPCState.WalkingToSeat;
         }
@@ -73,13 +61,18 @@ public class BaseController : MonoBehaviour
         return NPCState.Idle;
     }
 
+    protected NPCState sitOnClosestSeat()
+    {
+        seat = Seat.getClosestSeat(agent.transform.position);
+
+        return sit();
+    }
+
     protected NPCState sitOnRandomSeat()
     {
-        GameObject seat = Seat.getRandomSeat();
+        seat = Seat.getRandomSeat();
 
-        sitOn(seat);
-
-        return NPCState.WalkingToSeat;
+        return sit();
     }
 
     protected NPCState standUp()

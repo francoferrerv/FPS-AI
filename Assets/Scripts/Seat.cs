@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -56,17 +57,30 @@ public class Seat
         return null;
     }
 
-    public static GameObject getRandomSeat()
+    public static Seat getRandomSeat()
     {
-        GameObject[] chairs = GameObject.FindGameObjectsWithTag("Bench");
+        GameObject[] seats = GameObject.FindGameObjectsWithTag("Bench");
+        GameObject[] availableSeats = Array.FindAll(seats, seat =>
+        {
+            Vector3 seatPosition;
+            string placeName;
+            BenchStatus benchStatus = seat.GetComponent<BenchStatus>();
 
-        if (chairs.Length > 0) {
-            int chairIndex = Random.Range(0, chairs.Length);
+            return benchStatus.GetAvailable(out placeName, out seatPosition);
+        });
 
-            return chairs[chairIndex];
+        if (availableSeats.Length > 0) {
+            int seatIndex = UnityEngine.Random.Range(0, availableSeats.Length);
+            Vector3 seatPosition;
+            string placeName;
+            GameObject seat = availableSeats[seatIndex];
+            BenchStatus benchStatus = seat.GetComponent<BenchStatus>();
+
+            benchStatus.GetAvailable(out placeName, out seatPosition);
+            benchStatus.SetAvailability(placeName, false);
+
+            return new Seat(benchStatus, placeName, seatPosition);
         }
-
-        Debug.LogError("There are no chairs in the environment");
 
         return null;
     }

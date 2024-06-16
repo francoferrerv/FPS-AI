@@ -35,7 +35,7 @@ public class TalkingNPCController: BaseController
         {
             if (state == NPCState.Idle)
             {
-                state = sitOnClosestSeat();
+                state = sitOnRandomSeat();
             }
             else if (state == NPCState.Sitting)
             {
