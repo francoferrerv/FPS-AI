@@ -5,6 +5,8 @@ using UnityEngine.AI;
 
 public abstract class SeatStatus: MonoBehaviour
 {
+    public abstract bool IsAvailable();
+
     public abstract bool GetAvailable(out string name, out Vector3 position);
 
     public abstract Vector3 GetEulerAngles();

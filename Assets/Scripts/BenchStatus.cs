@@ -21,6 +21,11 @@ public class BenchStatus: SeatStatus
             + transform.right * 1f;
         eulerAngles = transform.rotation.eulerAngles;
     }
+    public override bool IsAvailable()
+    {
+        return leftAvailable || rightAvailable;
+    }
+
 
     public override bool GetAvailable(out string name, out Vector3 position)
     {

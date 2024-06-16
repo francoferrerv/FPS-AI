@@ -89,7 +89,7 @@ public class Seat
             string placeName;
             BenchStatus benchStatus = bench.GetComponent<BenchStatus>();
 
-            if (benchStatus.GetAvailable(out placeName, out benchPosition))
+            if (benchStatus.IsAvailable())
             {
                 benchesStatus.Add(benchStatus);
             }
