@@ -29,12 +29,10 @@ public abstract class BaseController : MonoBehaviour, ITalkingCharacter
 
     public virtual void TalkTo(ITalkingCharacter talkingCharacter)
     {
-        Debug.Log($"{name}: I can talk to {talkingCharacter.name}.");
     }
 
     public virtual void StopTalkingTo(ITalkingCharacter talkingCharacter)
     {
-        Debug.Log($"{name}: nobody wants to talk to me.");
     }
 
     // Start is called before the first frame update
