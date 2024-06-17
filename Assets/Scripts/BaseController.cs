@@ -11,7 +11,7 @@ public enum State
     Sitting
 }
 
-public abstract class BaseController : MonoBehaviour, ITalkingCharacter
+public class BaseController : MonoBehaviour, ITalkingCharacter
 {
     protected internal NavMeshAgent agent;
     protected internal Animator animator;
