@@ -9,6 +9,8 @@ public class BenchStatus: SeatStatus
     protected bool rightAvailable = true;
     protected Vector3 leftPosition = Vector3.zero;
     protected Vector3 rightPosition = Vector3.zero;
+    protected ITalkingCharacter leftTalkingCharacter = null;
+    protected ITalkingCharacter rightTalkingCharacter = null;
     protected Vector3 eulerAngles = Vector3.zero;
 
     protected void Start()
@@ -45,10 +47,50 @@ public class BenchStatus: SeatStatus
         if (name == "left")
         {
             leftAvailable = available;
+
+            if (available)
+            {
+                if (rightTalkingCharacter != null)
+                {
+                    leftTalkingCharacter.StopTalkingTo(rightTalkingCharacter);
+                    rightTalkingCharacter.StopTalkingTo(leftTalkingCharacter);
+                }
+
+                leftTalkingCharacter = null;
+            }
         }
         else
         {
             rightAvailable = available;
+
+            if (available)
+            {
+                if (leftTalkingCharacter != null)
+                {
+                    leftTalkingCharacter.StopTalkingTo(rightTalkingCharacter);
+                    rightTalkingCharacter.StopTalkingTo(leftTalkingCharacter);
+                }
+
+                rightTalkingCharacter = null;
+            }
+        }
+    }
+
+    public override void SetTalkingCharacter(string name, ITalkingCharacter talkingCharacter)
+    {
+        if (name == "left")
+        {
+            leftTalkingCharacter = talkingCharacter;
+        }
+        else
+        {
+            rightTalkingCharacter = talkingCharacter;
+        }
+
+        if (leftTalkingCharacter != null && rightTalkingCharacter != null)
+        {
+            leftTalkingCharacter.TalkTo(rightTalkingCharacter);
+            rightTalkingCharacter.TalkTo(leftTalkingCharacter);
         }
     }
 }

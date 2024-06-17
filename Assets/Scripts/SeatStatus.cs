@@ -12,4 +12,6 @@ public abstract class SeatStatus: MonoBehaviour
     public abstract Vector3 GetEulerAngles();
 
     public abstract void SetAvailability(string name, bool available);
+
+    public abstract void SetTalkingCharacter(string name, ITalkingCharacter talkingCharacter);
 }
