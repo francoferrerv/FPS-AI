@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class NPCMeganController: NPCController
+public class NPCMeganController: TalkingNPCController
 {
     public GameObject player;
     private PlayerController playerController;
