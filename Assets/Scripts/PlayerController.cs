@@ -59,9 +59,4 @@ public class PlayerController: BaseController
         paused = !paused;
         thirdPersonController.enabled = !paused;
     }
-
-    protected override void HandleSitting()
-    {
-        Debug.Log("Leonard is sitting");
-    }
 }
