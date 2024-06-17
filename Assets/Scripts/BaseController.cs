@@ -11,7 +11,7 @@ public enum State
     Sitting
 }
 
-public abstract class BaseController : MonoBehaviour
+public abstract class BaseController : MonoBehaviour, ITalkingCharacter
 {
     protected internal NavMeshAgent agent;
     protected internal Animator animator;
@@ -22,7 +22,20 @@ public abstract class BaseController : MonoBehaviour
     protected State state = State.Idle;
     protected float speed;
 
-    protected abstract void HandleSitting();
+    protected virtual void HandleSitting()
+    {
+        seat.status.SetTalkingCharacter(seat.placeName, this);
+    }
+
+    public virtual void TalkTo(ITalkingCharacter talkingCharacter)
+    {
+        Debug.Log($"{name}: I can talk to {talkingCharacter.name}.");
+    }
+
+    public virtual void StopTalkingTo(ITalkingCharacter talkingCharacter)
+    {
+        Debug.Log($"{name}: nobody wants to talk to me.");
+    }
 
     // Start is called before the first frame update
     protected virtual void Start()
