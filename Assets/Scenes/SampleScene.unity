@@ -27330,7 +27330,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 126b7b76a3a02f6fa9a27d36631d47b8, type: 3}
       propertyPath: m_Name
-      value: Leonard
+      value: LeonardModel
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 126b7b76a3a02f6fa9a27d36631d47b8, type: 3}
       propertyPath: m_Layer
@@ -38868,7 +38868,7 @@ GameObject:
   - component: {fileID: 9033143740787487221}
   - component: {fileID: 9033143740787487222}
   m_Layer: 7
-  m_Name: PlayerArmature
+  m_Name: Leonard
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
