@@ -12,6 +12,7 @@ public class NPCMeganController: TalkingNPCController
     {
         base.Start();
         playerController = player.GetComponent<PlayerController>();
+        sitOnClosestSeat();
     }
 
     protected override void Update()
@@ -22,21 +23,5 @@ public class NPCMeganController: TalkingNPCController
         }
 
         base.Update();
-        moveChairTest();
-    }
-
-    protected void moveChairTest()
-    {
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            if (state == State.Idle)
-            {
-                sitOnClosestSeat();
-            }
-            else if (state == State.Sitting)
-            {
-                standUp();
-            }
-        }
     }
 }
