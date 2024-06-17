@@ -11,15 +11,18 @@ public enum State
     Sitting
 }
 
-public class BaseController : MonoBehaviour
+public abstract class BaseController : MonoBehaviour
 {
     protected internal NavMeshAgent agent;
     protected internal Animator animator;
     private Seat seat;
+    private bool isSittingDown = false;
     private Vector3 initialEulerAngles;
     private float interpolationRatio;
     protected State state = State.Idle;
     protected float speed;
+
+    protected abstract void HandleSitting();
 
     // Start is called before the first frame update
     protected virtual void Start()
@@ -33,6 +36,7 @@ public class BaseController : MonoBehaviour
     protected virtual void Update()
     {
         UpdateState();
+        DetectSittingEvents();
     }
 
     protected void onReachedDestination()
@@ -46,6 +50,7 @@ public class BaseController : MonoBehaviour
         {
             walkTo(seat.position);
             state = State.WalkingToSeat;
+            isSittingDown = true;
 
             return;
         }
@@ -162,5 +167,16 @@ public class BaseController : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void DetectSittingEvents()
+    {
+        string clipName = animator.GetCurrentAnimatorClipInfo(0)[0].clip.name;
+
+        if (isSittingDown && clipName == "Sitting")
+        {
+            isSittingDown = false;
+            HandleSitting();
+        }
     }
 }

@@ -39,4 +39,9 @@ public class NPCMeganController: NPCController
             }
         }
     }
+
+    protected override void HandleSitting()
+    {
+        Debug.Log("Megan is sitting");
+    }
 }
