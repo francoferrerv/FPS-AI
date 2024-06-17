@@ -44,18 +44,18 @@ public class BenchStatus: SeatStatus
 
     public override void SetAvailability(string name, bool available)
     {
+        if (available && leftTalkingCharacter != null && rightTalkingCharacter != null)
+        {
+            leftTalkingCharacter.StopTalkingTo(rightTalkingCharacter);
+            rightTalkingCharacter.StopTalkingTo(leftTalkingCharacter);
+        }
+
         if (name == "left")
         {
             leftAvailable = available;
 
             if (available)
             {
-                if (rightTalkingCharacter != null)
-                {
-                    leftTalkingCharacter.StopTalkingTo(rightTalkingCharacter);
-                    rightTalkingCharacter.StopTalkingTo(leftTalkingCharacter);
-                }
-
                 leftTalkingCharacter = null;
             }
         }
@@ -65,12 +65,6 @@ public class BenchStatus: SeatStatus
 
             if (available)
             {
-                if (leftTalkingCharacter != null)
-                {
-                    leftTalkingCharacter.StopTalkingTo(rightTalkingCharacter);
-                    rightTalkingCharacter.StopTalkingTo(leftTalkingCharacter);
-                }
-
                 rightTalkingCharacter = null;
             }
         }
