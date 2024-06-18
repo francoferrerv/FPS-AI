@@ -16,10 +16,10 @@ public class BenchStatus: SeatStatus
     protected void Start()
     {
         leftPosition = transform.position
-            + transform.forward * 1f
+            + transform.forward * 1.2f
             - transform.right * 1f;
         rightPosition = transform.position
-            + transform.forward * 1f
+            + transform.forward * 1.2f
             + transform.right * 1f;
         eulerAngles = transform.rotation.eulerAngles;
     }
