@@ -9,7 +9,7 @@ using System.Data;
 // using UnityEditor.VersionControl;
 using System.Net;
 
-public class MicrophoneInput : MonoBehaviour
+public class VoiceInteraction : MonoBehaviour
 {
     private bool isRecording = false;
     private string deviceName;
@@ -19,10 +19,11 @@ public class MicrophoneInput : MonoBehaviour
     private string serverUrl = "wss://a8ca-186-129-180-196.ngrok-free.app/ws/audio";
     private AudioSource audioSource;
     private float sendTime;
+    public Transform playerTransform;
+    public float maxTalkingDistance;
 
     async void Start()
     {
-        audioSource = gameObject.AddComponent<AudioSource>();
         // Check if microphone access is granted
         if (Microphone.devices.Length == 0)
         {
@@ -69,9 +70,11 @@ public class MicrophoneInput : MonoBehaviour
 
     private void ProcessReceivedAudio(byte[] bytes)
     {
+        string npcName = "Megan";
         File.WriteAllBytes(Path.Combine(Application.persistentDataPath, "response2.wav"), bytes);
         AudioClip audioClip = ToAudioClip(Path.Combine(Application.persistentDataPath, "response2.wav"));
-        Debug.Log("Audio file saved successfully at: " + Path.Combine(Application.persistentDataPath, "response.wav"));
+        Debug.Log("Audio file saved successfully at: " + Path.Combine(Application.persistentDataPath, "response2.wav"));
+        audioSource = GameObject.Find(npcName).GetComponent<AudioSource>();
         audioSource.clip = audioClip;
         audioSource.Play();
     }
@@ -107,7 +110,7 @@ public class MicrophoneInput : MonoBehaviour
         }
     }
 
-    public async void SendAudio(byte[] audio)
+    public async void SendAudio(byte[] audio, GameObject closestNPC)
     {
         if (ws.State == WebSocketState.Open)
         {
@@ -143,47 +146,53 @@ public class MicrophoneInput : MonoBehaviour
 
     void SaveRecording()
     {
-        float duration = Time.time - startTime;
-        if (recording == null)
+        GameObject closestNPC = GetClosestNPC();
+        if (closestNPC != null)
         {
-            Debug.LogWarning("No recording to save!");
-            return;
+            Debug.Log("Closest NPC: " + closestNPC.name);
+
+            float duration = Time.time - startTime;
+            if (recording == null)
+            {
+                Debug.LogWarning("No recording to save!");
+                return;
+            }
+            recording = TrimRecording(recording, duration);
+            if (recording != null)
+            {
+
+                string filePath = Path.Combine(Application.persistentDataPath, "Recording.wav");
+                SavWav.Save(filePath, recording); // Save the recording as a WAV file
+
+                Debug.Log("Recording saved to: " + filePath);
+                byte[] audioBytes = File.ReadAllBytes(filePath);
+                SendAudio(audioBytes, closestNPC);
+            }
+            else
+            {
+                Debug.LogError("AudioClip is null.");
+            }
         }
-        recording = TrimRecording(recording, duration);
-        if (recording != null)
+    }
+
+    GameObject GetClosestNPC()
+    {
+        GameObject[] npcs = GameObject.FindGameObjectsWithTag("NPC");
+        GameObject closestNPC = null;
+        float shortestDistance = Mathf.Infinity;
+
+        foreach (GameObject npc in npcs)
         {
-            /*// Get the number of samples in the AudioClip
-            int sampleCount = recording.samples * recording.channels;
-
-            // Create a float array to hold the audio data
-            float[] audioData = new float[sampleCount];
-
-            // Get the audio data from the AudioClip
-            recording.GetData(audioData, 0);
-
-            // Convert the float array to a byte array
-            byte[] byteArray = new byte[sampleCount * 4]; // 4 bytes per float
-            Buffer.BlockCopy(audioData, 0, byteArray, 0, byteArray.Length);
-
-            // Now you have the audio data in a byte array
-            Debug.Log("Audio data converted to byte array.");*/
-
-
-            /*byte[] wavData = ConvertAudioClipToWav(recording);
-            Debug.Log("Audio data converted to WAV byte array.");*/
-
-
-            string filePath = Path.Combine(Application.persistentDataPath, "Recording.wav");
-            SavWav.Save(filePath, recording); // Save the recording as a WAV file
-
-            Debug.Log("Recording saved to: " + filePath);
-            byte[] audioBytes = File.ReadAllBytes(filePath);
-            SendAudio(audioBytes);
+            float distanceToPlayer = Vector3.Distance(playerTransform.position, npc.transform.position);
+            Debug.Log(distanceToPlayer);
+            if (distanceToPlayer < shortestDistance && distanceToPlayer <= maxTalkingDistance)
+            {
+                shortestDistance = distanceToPlayer;
+                closestNPC = npc;
+            }
         }
-        else
-        {
-            Debug.LogError("AudioClip is null.");
-        }
+
+        return closestNPC;
     }
 
     AudioClip TrimRecording(AudioClip originalClip, float targetDuration)
