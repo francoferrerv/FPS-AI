@@ -2892,6 +2892,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f6625fecaae7dcfb0a93c1c95ffb98e2, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1067911266}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f6625fecaae7dcfb0a93c1c95ffb98e2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1067911267}
   m_SourcePrefab: {fileID: 100100000, guid: f6625fecaae7dcfb0a93c1c95ffb98e2, type: 3}
 --- !u!1001 &152540181
 PrefabInstance:
@@ -18777,6 +18780,21 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!114 &1067911267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1067911261}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64e3db1cc36c520bfb04fa8bddfa4278, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FootstepAudioClips: []
+  FootstepAudioVolume: 0.5
+  player: {fileID: 4751987497422597512}
 --- !u!1001 &1074483226
 PrefabInstance:
   m_ObjectHideFlags: 0
