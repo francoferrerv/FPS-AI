@@ -44,7 +44,7 @@ public class ObjectMover : MonoBehaviour
 
         foreach (Collider collider in colliders)
         {
-            if (collider.GetComponent<Rigidbody>() != null)
+            if (collider.GetComponent<Rigidbody>() != null && collider.CompareTag("Cone"))
             {
                 float distance = Vector3.Distance(playerTransform.position, collider.transform.position);
                 if (distance < closestDistance)
