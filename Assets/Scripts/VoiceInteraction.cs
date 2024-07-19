@@ -16,11 +16,16 @@ public class VoiceInteraction : MonoBehaviour
     private AudioClip recording;
     private float startTime;
     private WebSocket ws;
-    private string serverUrl = "wss://18b3-186-129-185-100.ngrok-free.app/ws/audio";
+    private string serverUrl = "wss://9f85-186-129-183-179.ngrok-free.app/ws/audio";
     private AudioSource audioSource;
     private float sendTime;
     public Transform playerTransform;
     public float maxTalkingDistance;
+    public IceCreamSpawner iceCreamSpawner;
+    public GameObject chocolateIceCream;
+    public GameObject strawberryIceCream;
+    public GameObject vanillaIceCream;
+    public NpcCameraScreenshot npcCameraScreenshot;
 
     async void Start()
     {
@@ -37,14 +42,37 @@ public class VoiceInteraction : MonoBehaviour
 
         // Set event handlers
         ws.OnMessage += (bytes) =>
-        {
-            // Reading a plain text message
-            var message = System.Text.Encoding.UTF8.GetString(bytes);
-            Debug.Log("Received OnMessage! (" + message + ")");
-            float receiveTime = Time.time;
-            float roundTripTime = receiveTime - sendTime;
-            Debug.Log("Received response. Round-trip time: " + roundTripTime + " seconds");
-            ProcessReceivedAudio(bytes);
+        {  
+            if (!IsWavFile(bytes))
+            {
+                string message = System.Text.Encoding.UTF8.GetString(bytes);
+                Debug.Log("Received OnMessage! : " + message);
+                if (message.Contains("Chocolate"))
+                {
+                    Debug.Log("received chocolate");
+                    StartCoroutine(iceCreamSpawner.SpawnIceCream(chocolateIceCream)); ;
+                    
+                }
+                else if (message.Contains("Vanilla"))
+                {
+                    Debug.Log("received vanilla");
+                    StartCoroutine(iceCreamSpawner.SpawnIceCream(vanillaIceCream));
+                    
+                }
+                else if (message.Contains("Strawberry"))
+                {
+                    Debug.Log("received strawberry");
+                    StartCoroutine(iceCreamSpawner.SpawnIceCream(strawberryIceCream));
+                    
+                }
+            }
+            else
+            {
+                float receiveTime = Time.time;
+                float roundTripTime = receiveTime - sendTime;
+                Debug.Log("Received response. Round-trip time: " + roundTripTime + " seconds");
+                ProcessReceivedAudio(bytes);
+            }
 
         };
         ws.OnOpen += () =>
@@ -62,15 +90,31 @@ public class VoiceInteraction : MonoBehaviour
             Debug.Log("Connection closed! " + e);
         };
 
-        // Connect to the server
-        await ws.Connect();
-
-
+        try
+        {
+            await ws.Connect();
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError("WebSocket connection error: " + e.Message);
+        }
     }
 
+    bool IsWavFile(byte[] data)
+    {
+        if (data.Length < 12) return false;
+
+        // Check the "RIFF" chunk descriptor
+        if (data[0] != 'R' || data[1] != 'I' || data[2] != 'F' || data[3] != 'F') return false;
+
+        // Check the "WAVE" format
+        if (data[8] != 'W' || data[9] != 'A' || data[10] != 'V' || data[11] != 'E') return false;
+
+        return true;
+    }
     private void ProcessReceivedAudio(byte[] bytes)
     {
-        string npcName = "Megan";
+        string npcName = "The Boss";
         File.WriteAllBytes(Path.Combine(Application.persistentDataPath, "response2.wav"), bytes);
         AudioClip audioClip = ToAudioClip(Path.Combine(Application.persistentDataPath, "response2.wav"));
         Debug.Log("Audio file saved successfully at: " + Path.Combine(Application.persistentDataPath, "response2.wav"));
@@ -78,7 +122,7 @@ public class VoiceInteraction : MonoBehaviour
         audioSource.clip = audioClip;
         audioSource.Play();
     }
-    async void Update()
+    void Update()
     {
 
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -99,6 +143,24 @@ public class VoiceInteraction : MonoBehaviour
                 StopRecording();
             }
         }
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            StartCoroutine(SendScreenshot());
+        }
+    }
+
+    IEnumerator SendScreenshot()
+    {
+        // Wait for the screenshot byte array
+        IEnumerator screenshotCoroutine = npcCameraScreenshot.CaptureScreenshot();
+        yield return StartCoroutine(screenshotCoroutine);
+        byte[] screenshotBytes = (byte[])screenshotCoroutine.Current;
+
+        if (screenshotBytes != null && ws.State == WebSocketState.Open)
+        {
+            ws.Send(screenshotBytes);
+            Debug.Log("Screenshot sent!");
+        }
     }
 
     async void OnApplicationQuit()
@@ -106,11 +168,11 @@ public class VoiceInteraction : MonoBehaviour
         // Close the WebSocket connection when the application quits
         if (ws != null)
         {
-            ws.Close();
+            await ws.Close();
         }
     }
 
-    public async void SendAudio(byte[] audio, GameObject closestNPC)
+     public async void SendAudio(byte[] audio, GameObject closestNPC)
     {
         if (ws.State == WebSocketState.Open)
         {
