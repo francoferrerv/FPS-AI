@@ -11239,6 +11239,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 49bfd2e7a273e7a4ca574b30808dd0b4, type: 3}
   m_PrefabInstance: {fileID: 1273466349}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &635103666 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: ed0eddf9a07fbb4c6ab08215f95f40c8, type: 3}
+  m_PrefabInstance: {fileID: 1112018083}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &635103667 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ed0eddf9a07fbb4c6ab08215f95f40c8, type: 3}
@@ -48280,6 +48285,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 827b06d3e90bf6459ad0ad2600202e1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Leonard: {fileID: 2134626917}
+  Policeman: {fileID: 635103666}
 --- !u!1 &9037727976611153186
 GameObject:
   m_ObjectHideFlags: 0

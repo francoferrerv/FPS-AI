@@ -8,6 +8,8 @@ public class PlayerController: BaseController
 {
     protected internal ThirdPersonController thirdPersonController;
     public bool paused { get; private set; }
+    public GameObject Leonard;
+    public GameObject Policeman;
 
     protected override void Start()
     {
