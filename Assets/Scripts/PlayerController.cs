@@ -51,7 +51,7 @@ public class PlayerController: BaseController
             disableCurrentCharacter();
             currentCharacter++;
 
-            if (currentCharacter > characterCount)
+            if (currentCharacter >= characterCount)
             {
                 currentCharacter = 0;
             }
