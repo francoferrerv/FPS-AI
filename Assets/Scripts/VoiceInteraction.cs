@@ -16,7 +16,7 @@ public class VoiceInteraction : MonoBehaviour
     private AudioClip recording;
     private float startTime;
     private WebSocket ws;
-    private string serverUrl = "wss://9f85-186-129-183-179.ngrok-free.app/ws/audio";
+    private string serverUrl = "wss://73fc-186-129-183-179.ngrok-free.app/ws/audio";
     private AudioSource audioSource;
     private float sendTime;
     public Transform playerTransform;
