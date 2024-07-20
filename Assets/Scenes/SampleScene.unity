@@ -19492,7 +19492,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: ed0eddf9a07fbb4c6ab08215f95f40c8, type: 3}
       propertyPath: m_Name
-      value: Policeman
+      value: PolicemanModel
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -48285,8 +48285,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 827b06d3e90bf6459ad0ad2600202e1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Leonard: {fileID: 2134626917}
-  Policeman: {fileID: 635103666}
+  avatars:
+  - {fileID: 9000000, guid: 126b7b76a3a02f6fa9a27d36631d47b8, type: 3}
+  - {fileID: 9000000, guid: ed0eddf9a07fbb4c6ab08215f95f40c8, type: 3}
+  models:
+  - {fileID: 2134626917}
+  - {fileID: 635103666}
 --- !u!1 &9037727976611153186
 GameObject:
   m_ObjectHideFlags: 0
