@@ -12,6 +12,7 @@ public class PlayerController: BaseController
     public GameObject[] models;
     [Header("Images for The Boss")]
     public GameObject ImagePlane;
+    public Texture2D[] Images;
     protected int currentCharacter;
     protected int characterCount;
 
