@@ -53,6 +53,13 @@ public class PlayerController: BaseController
             return;
         }
 
+        HandleKeysRelatedToSitting();
+
+        base.Update();
+    }
+
+    protected void HandleKeysRelatedToSitting()
+    {
         if (Input.GetKeyDown(KeyCode.Return))
         {
             if (state == State.Idle)
@@ -76,8 +83,6 @@ public class PlayerController: BaseController
                 standUp();
             }
         }
-
-        base.Update();
     }
 
     protected void SwapToPreviousCharacter()
