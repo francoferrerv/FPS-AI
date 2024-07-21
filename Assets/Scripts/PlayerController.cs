@@ -47,31 +47,7 @@ public class PlayerController: BaseController
             StartCoroutine(screenshotCoroutine);
         }
 
-        if (Input.GetKeyDown(KeyCode.PageUp))
-        {
-            DisableCurrentCharacter();
-            currentCharacter--;
-
-            if (currentCharacter < 0)
-            {
-                currentCharacter = characterCount - 1;
-            }
-
-            EnableCurrentCharacter();
-        }
-
-        if (Input.GetKeyDown(KeyCode.PageDown))
-        {
-            DisableCurrentCharacter();
-            currentCharacter++;
-
-            if (currentCharacter >= characterCount)
-            {
-                currentCharacter = 0;
-            }
-
-            EnableCurrentCharacter();
-        }
+        HandleCharacterSwapKeys();
 
         if (Input.GetKeyDown(KeyCode.P))
         {
@@ -108,6 +84,35 @@ public class PlayerController: BaseController
         }
 
         base.Update();
+    }
+
+    protected void HandleCharacterSwapKeys()
+    {
+        if (Input.GetKeyDown(KeyCode.PageUp))
+        {
+            DisableCurrentCharacter();
+            currentCharacter--;
+
+            if (currentCharacter < 0)
+            {
+                currentCharacter = characterCount - 1;
+            }
+
+            EnableCurrentCharacter();
+        }
+
+        if (Input.GetKeyDown(KeyCode.PageDown))
+        {
+            DisableCurrentCharacter();
+            currentCharacter++;
+
+            if (currentCharacter >= characterCount)
+            {
+                currentCharacter = 0;
+            }
+
+            EnableCurrentCharacter();
+        }
     }
 
     protected int GetAlphaNumber()
