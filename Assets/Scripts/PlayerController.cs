@@ -133,6 +133,31 @@ public class PlayerController: BaseController
         }
     }
 
+    protected void SetPlaneScale(Texture2D texture)
+    {
+        const float maxScaleX = 0.35f;
+        const float maxScaleY = 0.2f;
+        const float maxRatio = maxScaleX / maxScaleY;
+        float textureWidth = texture.width;
+        float textureHeight = texture.height;
+        float textureRatio = textureWidth / textureHeight;
+        float scaleX = maxScaleX;
+        float scaleY = maxScaleY;
+
+        if (textureRatio < maxRatio)
+        {
+            scaleX = maxScaleY * textureRatio;
+        }
+
+        if (textureRatio > maxRatio)
+        {
+            scaleY = maxScaleX / textureRatio;
+        }
+
+        Debug.Log($"Scale x: {scaleX}, z: {scaleY}");
+        ImagePlane.transform.localScale = new Vector3(scaleX, 1, scaleY);
+    }
+
     protected void EnableImagePlane(int imageNumber)
     {
         if (imageNumber >= 1 && imageNumber <= imageCount)
@@ -141,6 +166,7 @@ public class PlayerController: BaseController
             Material material = ImagePlane.GetComponent<Renderer>().material;
 
             Debug.Log($"enabling {ImagePlane.name} with image {imageNumber - 1}...");
+            SetPlaneScale(texture);
             material.mainTexture = texture;
             ImagePlane.SetActive(true);
         }
