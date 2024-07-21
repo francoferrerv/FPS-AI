@@ -49,7 +49,7 @@ public class PlayerController: BaseController
 
         if (Input.GetKeyDown(KeyCode.PageUp))
         {
-            disableCurrentCharacter();
+            DisableCurrentCharacter();
             currentCharacter--;
 
             if (currentCharacter < 0)
@@ -57,12 +57,12 @@ public class PlayerController: BaseController
                 currentCharacter = characterCount - 1;
             }
 
-            enableCurrentCharacter();
+            EnableCurrentCharacter();
         }
 
         if (Input.GetKeyDown(KeyCode.PageDown))
         {
-            disableCurrentCharacter();
+            DisableCurrentCharacter();
             currentCharacter++;
 
             if (currentCharacter >= characterCount)
@@ -70,7 +70,7 @@ public class PlayerController: BaseController
                 currentCharacter = 0;
             }
 
-            enableCurrentCharacter();
+            EnableCurrentCharacter();
         }
 
         if (Input.GetKeyDown(KeyCode.P))
@@ -185,7 +185,7 @@ public class PlayerController: BaseController
         }
     }
 
-    protected void enableCurrentCharacter()
+    protected void EnableCurrentCharacter()
     {
         Avatar avatar = avatars[currentCharacter];
         GameObject model = models[currentCharacter];
@@ -195,7 +195,7 @@ public class PlayerController: BaseController
         animator.avatar = avatar;
     }
 
-    protected void disableCurrentCharacter()
+    protected void DisableCurrentCharacter()
     {
         GameObject model = models[currentCharacter];
 
