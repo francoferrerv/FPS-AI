@@ -15,11 +15,13 @@ public class PlayerController: BaseController
     public Texture2D[] Images;
     protected int currentCharacter;
     protected int characterCount;
+    protected int imageCount;
 
     protected override void Start()
     {
         base.Start();
         thirdPersonController = this.GetComponent<ThirdPersonController>();
+        imageCount = Images.Length;
         characterCount = avatars.Length;
 
         for (int i = 0; i < characterCount; i++)
@@ -36,6 +38,8 @@ public class PlayerController: BaseController
 
     protected override void Update()
     {
+        HandleImageKeys();
+
         if (Input.GetKeyDown(KeyCode.PageUp))
         {
             disableCurrentCharacter();
@@ -97,6 +101,56 @@ public class PlayerController: BaseController
         }
 
         base.Update();
+    }
+
+    protected int GetAlphaNumber()
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            if (Input.GetKeyDown((KeyCode)(48 + i)))
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    protected void DisableImagePlane(int imageNumber)
+    {
+        if (imageNumber >= 1 && imageNumber < 10)
+        {
+            Debug.Log($"disabling {ImagePlane.name}...");
+            ImagePlane.SetActive(false);
+        }
+    }
+
+    protected void EnableImagePlane(int imageNumber)
+    {
+        if (imageNumber >= 1 && imageNumber <= imageCount)
+        {
+            Texture2D texture = Images[imageNumber - 1];
+            Material material = new Material(Shader.Find("Diffuse"));
+
+            Debug.Log($"enabling {ImagePlane.name} with image {imageNumber - 1}...");
+            material.mainTexture = texture;
+            ImagePlane.GetComponent<Renderer>().material = material;
+            ImagePlane.SetActive(true);
+        }
+    }
+
+    protected void HandleImageKeys()
+    {
+        int imageNumber = GetAlphaNumber();
+
+        if (ImagePlane.activeSelf)
+        {
+            DisableImagePlane(imageNumber);
+        }
+        else
+        {
+            EnableImagePlane(imageNumber);
+        }
     }
 
     protected void enableCurrentCharacter()
