@@ -41,12 +41,6 @@ public class PlayerController: BaseController
     {
         HandleImageKeys();
 
-        if (Input.GetKeyDown(KeyCode.Home))
-        {
-            IEnumerator screenshotCoroutine = npcCameraScreenshot.CaptureScreenshot();
-            StartCoroutine(screenshotCoroutine);
-        }
-
         HandleCharacterSwapKeys();
 
         if (Input.GetKeyDown(KeyCode.P))
@@ -197,6 +191,12 @@ public class PlayerController: BaseController
         else
         {
             EnableImagePlane(imageNumber);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Home))
+        {
+            IEnumerator screenshotCoroutine = npcCameraScreenshot.CaptureScreenshot();
+            StartCoroutine(screenshotCoroutine);
         }
     }
 
