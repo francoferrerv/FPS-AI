@@ -48734,6 +48734,7 @@ MonoBehaviour:
   - {fileID: 1572790103}
   - {fileID: 1298781894}
   - {fileID: 861940276}
+  ImagePlane: {fileID: 1087296247}
 --- !u!1 &9037727976611153186
 GameObject:
   m_ObjectHideFlags: 0

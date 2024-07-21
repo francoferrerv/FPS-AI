@@ -10,6 +10,8 @@ public class PlayerController: BaseController
     public bool paused { get; private set; }
     public Avatar[] avatars;
     public GameObject[] models;
+    [Header("Images for The Boss")]
+    public GameObject ImagePlane;
     protected int currentCharacter;
     protected int characterCount;
 
