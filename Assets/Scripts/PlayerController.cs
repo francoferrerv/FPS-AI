@@ -36,9 +36,17 @@ public class PlayerController: BaseController
         }
     }
 
+    public NpcCameraScreenshot npcCameraScreenshot;
     protected override void Update()
     {
         HandleImageKeys();
+
+        if (Input.GetKeyDown(KeyCode.Home))
+        {
+            IEnumerator screenshotCoroutine = npcCameraScreenshot.CaptureScreenshot();
+            StartCoroutine(screenshotCoroutine);
+        }
+
 
         if (Input.GetKeyDown(KeyCode.PageUp))
         {
@@ -130,11 +138,10 @@ public class PlayerController: BaseController
         if (imageNumber >= 1 && imageNumber <= imageCount)
         {
             Texture2D texture = Images[imageNumber - 1];
-            Material material = new Material(Shader.Find("Diffuse"));
+            Material material = ImagePlane.GetComponent<Renderer>().material;
 
             Debug.Log($"enabling {ImagePlane.name} with image {imageNumber - 1}...");
             material.mainTexture = texture;
-            ImagePlane.GetComponent<Renderer>().material = material;
             ImagePlane.SetActive(true);
         }
     }
