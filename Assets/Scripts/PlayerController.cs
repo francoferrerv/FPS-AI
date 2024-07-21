@@ -47,7 +47,6 @@ public class PlayerController: BaseController
             StartCoroutine(screenshotCoroutine);
         }
 
-
         if (Input.GetKeyDown(KeyCode.PageUp))
         {
             disableCurrentCharacter();
