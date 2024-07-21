@@ -39,10 +39,6 @@ public class PlayerController: BaseController
     public NpcCameraScreenshot npcCameraScreenshot;
     protected override void Update()
     {
-        HandleImageKeys();
-
-        HandleCharacterSwapKeys();
-
         if (Input.GetKeyDown(KeyCode.P))
         {
             Pause();
@@ -52,6 +48,10 @@ public class PlayerController: BaseController
         {
             return;
         }
+
+        HandleImageKeys();
+
+        HandleCharacterSwapKeys();
 
         HandleKeysRelatedToSitting();
 
