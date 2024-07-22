@@ -8,6 +8,7 @@ public class PlayerController: BaseController
 {
     protected internal ThirdPersonController thirdPersonController;
     public bool paused { get; private set; }
+    [Header("Characters")]
     public Avatar[] avatars;
     public GameObject[] models;
     [Header("Images for The Boss")]
@@ -40,6 +41,7 @@ public class PlayerController: BaseController
         }
     }
 
+    [Header("Talking NPC")]
     public NpcCameraScreenshot npcCameraScreenshot;
     protected override void Update()
     {
