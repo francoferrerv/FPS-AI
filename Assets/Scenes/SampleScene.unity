@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.567565, g: 0.6926284, b: 0.8834022, a: 1}
+  m_IndirectSpecularColor: {r: 0.567596, g: 0.6926606, b: 0.88343924, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -51382,6 +51382,7 @@ MonoBehaviour:
   Images:
   - {fileID: 2800000, guid: 3f9a15f3d8d0237f7a7c5332e47a24ab, type: 3}
   - {fileID: 2800000, guid: 375e600ea22cbdc6ea9a69e5b117f968, type: 3}
+  SkyboxRotationDelta: 0.5
   npcCameraScreenshot: {fileID: 137624759}
 --- !u!1 &9037727976611153186
 GameObject:

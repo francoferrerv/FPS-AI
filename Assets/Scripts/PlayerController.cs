@@ -13,6 +13,9 @@ public class PlayerController: BaseController
     [Header("Images for The Boss")]
     public GameObject ImagePlane;
     public Texture2D[] Images;
+    [Header("Skybox")]
+    public float SkyboxRotationDelta = 0.5f;
+    protected float currentSkyboxRotation = 0.0f;
     protected int currentCharacter;
     protected int characterCount;
     protected int imageCount;
@@ -21,6 +24,7 @@ public class PlayerController: BaseController
     {
         base.Start();
         thirdPersonController = this.GetComponent<ThirdPersonController>();
+        RenderSettings.skybox.SetFloat("_Rotation", currentSkyboxRotation);
         imageCount = Images.Length;
         characterCount = avatars.Length;
 
@@ -55,7 +59,32 @@ public class PlayerController: BaseController
 
         HandleKeysRelatedToSitting();
 
+        HandleSkyboxRotationKeys();
+
         base.Update();
+    }
+
+    protected void HandleSkyboxRotationKeys()
+    {
+        if (Input.GetKey(KeyCode.I))
+        {
+            currentSkyboxRotation += SkyboxRotationDelta;
+            currentSkyboxRotation %= 360;
+            RenderSettings.skybox.SetFloat("_Rotation", currentSkyboxRotation);
+        }
+
+        if (Input.GetKey(KeyCode.O))
+        {
+            currentSkyboxRotation -= SkyboxRotationDelta;
+
+            if (currentSkyboxRotation < 0)
+            {
+                currentSkyboxRotation = 360 - currentSkyboxRotation;
+            }
+
+            RenderSettings.skybox.SetFloat("_Rotation", currentSkyboxRotation);
+        }
+
     }
 
     protected void HandleKeysRelatedToSitting()
