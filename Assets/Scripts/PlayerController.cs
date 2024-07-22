@@ -16,6 +16,8 @@ public class PlayerController: BaseController
     public Texture2D[] Images;
     [Header("Skybox")]
     public float SkyboxRotationDelta = 0.5f;
+    [Header("Talking NPC")]
+    public NpcCameraScreenshot npcCameraScreenshot;
     protected float currentSkyboxRotation = 0.0f;
     protected int currentCharacter;
     protected int characterCount;
@@ -41,8 +43,6 @@ public class PlayerController: BaseController
         }
     }
 
-    [Header("Talking NPC")]
-    public NpcCameraScreenshot npcCameraScreenshot;
     protected override void Update()
     {
         if (Input.GetKeyDown(KeyCode.P))
